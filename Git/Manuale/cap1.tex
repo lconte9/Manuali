@@ -1,0 +1,88 @@
+\chapter{Primi passi con Git}
+
+Innanzi tutto cerchiamo di definire cosa è Git e che tipo di applicazione è.
+Git rientra tra i programmi di versioning cioè sistemo che registrano, nel tempo, i cambiamenti ad un file o ad una serie di file, così da poter richiamare una specifica versione in un secondo momento. Per gli esempi di questo libro verrà usato il codice sorgente di un software come file sotto controllo di versione, anche se in realtà gli esempi si possono eseguire quasi con ogni tipo di file sul computer.
+Nello specifico Git è un sistema di gestione del software distribuito.
+
+\section{Stati del file}
+
+Git ha 3 possibili stati dei file del progetto :
+\begin{itemize}
+	\item \textbf{MODIFIED} : file è stato modificato rispetto alla versione salvata ma non è stato selezionato per essere salvato nelle snapshot
+	
+	\item \textbf{STAGED} : file modificato e inserito nella lista dei file da mettere nella versione snapshot
+	
+	\item \textbf{COMMITTED} : file salvato nel database locale
+\end{itemize}
+Quindi in generale, guardando la soluzione da un altra prospettiva, possiamo dire che i file che modifichiamo, quelli che fanno parte del nostro progetto, della nostra aria di lavoro, sono le versioni modificate di quelli che ha in possesso il database di Git. Quando effettuiamo uno stage non facciamo altro che inserire i nomi dei file in un indice che rappresenta i file che faranno parte della snapshot. Mentre il commit non è altro che una raccolta di questi file e come se facessimo un istantanea, salviamo il loro contenuto in un database gestito da Git in locale sul nostro PC, questi file sono correlati da una serie di metadati che ne permettono il recupero e la certezza che essi non possano essere modificati senza che Git non se ne accorga.
+Git mette a disposizione sia la classica riga di comando che delle interfacce grafiche ma per avere a disposizione tutto il set di funzionalità si consiglia il CLI.
+
+\section{Istallazione}
+Per quanto riguarda Windows e Mac basta scaricare l'applicativo ed istallarlo tramite le procedure guidate, mentre per linux in funzione della distribuzione i comandi possono essere i seguenti: 
+\begin{lstlisting}[language = Bash]
+	apt-get install git
+	yum install git
+\end{lstlisting}
+
+\section{Impostare l'ambiente}
+
+E possibile configurare Git tramite il tool da riga di comando :
+
+\begin{lstlisting}[language = Bash]
+	git config
+\end{lstlisting}
+
+Mentre i file che tengono tracia delle configurazioni sono :
+\begin{itemize}
+	\item \textbf{/etc/gitconfig} : contiene i valori impostati dei singoli utenti nel sistema e dei loro repository se passiamo l'opzione \textit{--system} al comando \textit{git config} possiamo leggere e mofificare questo file
+	
+	\item \textbf{~/.git/config    ~/.config/git/config} : contiene i dati specifici per l'utente, per modificare questo file possiamo passare al comendo \textit{git config} l'opzione \textit{--global}
+	
+	\item \textbf{config} : è un file specifico per la repository del progetto specifico 
+\end{itemize}
+In generale si prioritarizzano le impostazioni da quelle più vicine al progetto a quelle globali, quindi .gitconfig ha priorità superiore ad /etc/gitconfig.
+\section{Definire l'identità}
+Dopo aver installato git bisogna iniziare con i settaggi; il primo è quello relativo all'identità globale.
+\begin{lstlisting}
+	 git config --global user.name "John Doe"
+	 git config --global user.email johndoe@example.com
+\end{lstlisting}
+Questo settaggio è importate poiché queste sono le credenziali che Git utilizza per i commit. Queste inoltre saranno le credenziali che verra utilizzate di default per ogni operazione che si vuole effettuare. nel caso si vogliano sovrascrivere alcune di queste credenziali per specifici progetti basta ripetere il comando nella cartella principale del progetto senza l'attributo \textit{--global} per modificare solo le opzioni locali.
+\section{Definire l'editor}
+Dopo aver impostato l'identità bisogna scegliere l'editor predefinito tramite il comando : 
+\begin{lstlisting}
+	 git config --global core.editor nome_editor
+\end{lstlisting}
+l'editor viene invocato da Git per mostrare delle informazioni come ad esempio i merge o per altre comunicazioni relative al codice.
+\section{Verificare le impostazioni}
+Per verificare le impostazioni inserite basta crivere nel CLI :
+\begin{lstlisting}
+	git config --list
+\end{lstlisting}
+Ottenendo come output :
+\begin{lstlisting}
+	user.name=John Doe
+	user.email=johndoe@example.com
+	color.status=auto
+	color.branch=auto
+	color.interactive=auto
+	color.diff=auto
+	...
+\end{lstlisting}
+è possibile anche nostrare uno solo dei campi inserendo una key:
+\begin{lstlisting}
+	git config user.name
+\end{lstlisting}
+\section{Comando help}
+Durante l'uso di Git ci sono 3 modi per poter chiedere informazioni al CLI :
+\begin{lstlisting}
+		git help <verb>
+		git <verb> --help
+		man git-<verb>
+\end{lstlisting}
+è possibile quindi richiamare o il manuale di qualsiasi comando in questi 3 modi ed inoltre questi comandi sono globali e possono essere richiati da qualsiasi finestra del CLI
+
+
+
+
+

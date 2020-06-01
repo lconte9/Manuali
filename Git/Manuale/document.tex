@@ -1,0 +1,80 @@
+\documentclass[12pt,a4paper]{book}
+\usepackage[utf8]{inputenc}
+\usepackage[italian]{babel}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{makeidx}
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage[left=3.00cm, right=3.50cm, top=3.00cm, bottom=3.00cm]{geometry}
+%stu burdell è per inserire la formattazzione del codice nel testo
+\usepackage[svgnames]{xcolor}
+\usepackage{listings}
+\lstset{
+	basicstyle=\footnotesize,
+	keywordstyle=\color{MidnightBlue}\bfseries,
+	identifierstyle=\color{Purple},
+	commentstyle=\color{Green}\itshape,
+	stringstyle=\color{Red}\ttfamily,
+	showstringspaces=false,
+	numbers=left, numberstyle=\tiny,
+	stepnumber=1, numbersep=5pt,
+	tabsize=4,
+	framexleftmargin=5mm, rulesepcolor=\color{LightGray},
+	frame=LtBr,
+	language={Bash},
+	mathescape=true,
+	fontadjust=true,
+	breaklines=true,breakatwhitespace=true,breakautoindent
+}
+
+\onehalfspacing
+
+%%%per impostare che in tutte le pagine non ci deve essere l'intestazione ma solo il numero della pagina al piè di pagina centrale
+\pagestyle{plain}
+
+\author{Luca Conte}
+\title{Git}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Bibliografia
+\usepackage[bibstyle=numeric]{biblatex}
+\bibliography{biblio}
+
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%frontespizio
+\frontmatter
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	dedica personale
+
+
+
+	
+	
+	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%indice
+
+	% INDICE GENERALE
+\tableofcontents
+	
+	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Introduzione
+\input{introduzione}
+	
+	
+	
+\mainmatter
+
+\input{cap1}
+\input{cap2}
+
+
+\backmatter
+\input{conclusioni}
+
+
+%%%%%%%%%%%%%%lista delle figure
+
+%\input{dediche}	
+
+
+\end{document}	

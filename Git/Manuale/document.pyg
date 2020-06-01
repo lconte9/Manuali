@@ -1,0 +1,21 @@
+	git config
+\end{ninted}
+
+Mentre i file che tengono tracia delle configurazioni sono :
+\begin{itemize}
+	\item /etc/gitconfig : contiene i valori impostati dei singoli utenti nel sistema e dei loro repository se passiamo l'opzione \textit{--system} al comando \textit{git config} possiamo leggere e mofificare questo file
+	
+	\item ~/.gitconfig o ~/.config/git/config : contiene i dati specifici per l'utente, per modificare questo file possiamo passare al comendo \textit{git config} l'opzione \textit{--global}
+	
+	\item config : è un file specifico per la repository del progetto specifico
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
