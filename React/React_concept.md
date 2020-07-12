@@ -397,3 +397,375 @@ ipoteticamente potremmo gestire stesso all'interno del componente il render di u
 
 
 ## Routing
+
+Per introdurre il routing dobbiamo parlare prima di tutto della definizione di location hash e location pathname.
+l'oggetto location, figlio dell'oggetto window, gestice le informazioni nell'URL.
+Quando parliamo dell'oggetto location.hash parliamo della parte dell'url seguita dal simbolo **#**, questa parte viene definita *ancora* e viene utilizzata per la gestione della web app lato client, ad esempio per il passaggio di informazioni da un componente ad un altro.
+Mentre l'oggetto location.pathname rappresenta l'indirizzo dopo l'host.
+
+Nel HTML 5 sono state sviluppate delle API che permettono la navigazione nello storico delle pagine visitate senza dover ricaricare la pagina, tramite le funzioni `history.pushState()`, `history.replaceState()` e altre.
+React sfrutta questo metodo per utilizzare le path non per richiedere informazioni al server, come tutti i normali siti fanno, ma per gestire l'applicazione lato client. Questo metodo di navigazione dipende dai settaggi del server.
+
+In React il routing viene gestito tramite dei componenti e con la composizione di questi è possibile gestire in maniera dinamica l'indirizzamento ai componenti.
+
+Per poter utilizzare questi componenti bisona vedere se la libreria `react-router-dom` è installata, (in genere viene installata di default se si usa il comando `npx create-react-app nome_app`), nel caso la si installa con il comando `npm install --save react-router-dom`.  
+
+I componenti di react-router-dom sono i seguneti :  
++ BrowserRouter : un wrapper che gestirà le rotte
++ HashRouter : come BrowserRouter solo basato sulle hash
++ Route : definisce una rotta collegandola ad un componente
++ Link : crea un link basilare per la navigazione sfruttando i metodi di HTML 5 presentati prima
++ NavLink : come link ma con più impostazioni 
++ Switch : renderizza la prima Route che corrisponde con la ricerca delle rotte
+
+
+**Argomenti non trattati ma presenti nella libreria**
++ Redirect : non lo approfdisco 
+    + parametro strict 
+    + parametro render
+    + parametro children
+
+
+### BrowserRouter
+Viene utilizzato come wrapper come nel seguente esempio :  
+```js
+<BrowserRouter>
+    <App />
+</BrowserRouter>
+```
+
+### Route
+Il componente Route viene utilizzato per definire il la rotta ed il collegamento al componente nel segunete modo :
+```js
+<BrowserRouter>
+    <Route path="/" component={App} />
+    <Route path="/test" component={Test} />
+</BrowserRouter>
+```
+
+Le rotte vengono valutate in funzione di un criterio di ricerca della path, prendendo il caso precedente se noi scriviamo sul nostro host la path : `http://host.bu/` automaticamente verrà renderizzato il componente App mentre se noi scriviamo : `http://host.bu/test` verra renderizzato sia il componente App che il componente Test.
+Per evitare ciò basta inserire il paramentro **exact**.
+
+
+Una volta che si è definito un componente e possibile inserire ulteriori rotte al suo interno ad esempio :
+```js
+const Test = () => {
+    return(
+        <div>
+            <Route path="test/2" component={Test2}>
+            <h1>questo è il componente test</h1>
+        </div>
+    )
+}
+```
+```js
+const Test2 = () => {<h1>questo è il componente test2 </h1>}
+```
+A questo punto supponendo di scrivere nell'url `http://host.bu/test/2` vedremo comparire entrambe le scritte definite nei due componenti.
+
+Quando renderizziamo un componente tramite la libreria react-router-dom, il componente riceve come parametri in ingresso gli obj **history, location e match** che tramite il codice seguente è possibile visionare :
+```js
+const Test2 = ({match}) => {
+    console.log(match);
+    return <h1>questo è il componente test2</h1>
+}
+```
+l'output di console.log è il seguente : 
+```JSON
+isExact : false,
+params : {},
+path : /test/2,
+url : /test/2,
+```
+
+Questo obj permette di creare delle rotte paramentriche sfruttando la string interpulation di JS.
+La string interpulation viene implemetata tramite i backtick **`** e con l'utilizzo della struttura **${}** un esempio è il seguente :
+```js
+const Test = ({match}) => {
+    return(
+        <div>
+            <Route path={`${match.path}/2`} component={Test2}>
+            <h1>questo è il componente test</h1>
+        </div>
+    )
+}
+```
+Un altra operazione che possiamo fare è inserire un *placeholder* per indicare un parametro che può essere utilizzato per identificare uno specifico componente :
+```js
+const Test = ({match}) => {
+    return(
+        <div>
+            <Route path={`${match.path}/:id`} component={Test2}>
+            <h1>questo è il componente test</h1>
+        </div>
+    )
+}
+```
+In questo modo l'Obj match viene arricchito con un parametro ottenibile tramite `match.params.id`, questo ci permette di indentificare uno specifico riferimento di un componente. Questa operazione può essere reiterata in funzione di quanti parametri abbiamo bisogno per identificare una risorsa.
+Se il parametro fosse opzionale possiamo inserire dopo il placeholder un **?** come nel seguente esempio :
+```js
+<Route path={`${match.path}/:id?`} component={Test2}/>
+```
+Questa opzione può essere utilile poichè se non viene passato un id come nell'esempio di default react non renderizza nulla quindi il componente Test2 non verrebbe renderizzato.
+Un ulteriore aggiunta che si può fare è l'inserimento di un *espressione regolare* per definire quali valori possono passare nel placeholder : 
+```js
+<Route path={`${match.path}/:id([0-9]+)?`} component={Test2}/>
+```
+
+
+Possiamo inserire nella path anche espressioni logiche come ad esempio :
+```js
+<Route path="(/|/test)" component={Test}/>
+```
+In questo caso caricherà il componente Test sia se l'url è **/** sia nel caso di **/test**
+
+### Link e NavLink 
+
+Una volta definite le rotte per creare un meno o comunque dei link che possano essere utilizzati per navigare nella web app utilizziamo questi due componenti.
+
+```js
+<Link to="/">Home</Link>
+<NavLink to="/" activeClassName="active">Home</NavLink>
+```
+La differenza tra Link e NavLink sta nell'aggiunta di due funzionalità per la loro resa grafica.
+
+L'attributi **to** può prendere in ingresso vari parametri e sono : 
+```js
+to={{
+    pathname: '/',
+    search: '?query=aaa',
+    hash: '#hash-value',
+    state: { 
+            fromTeam: "informazioni passate al componente Home"
+            + "attraverso l'oggetto location" 
+            }
+}}
+```
+Questi possono essere utilizzati per passare infomrazioni ma il link in generale utilizza come selettore pathname che attiverà la route definita in precedenza.
+
+Come per Route è possibile utilizzare l'attributo **exact** per ad esempio far in modo che il link risulti attivo solo se la path in qustione è proprio identica alla path del link.
+
+Il componente NavLink ha due attributi in più rispetto a Link e sono :
++ activeClassName="NomeClassCSS" : permette di applicare un CSS quando il link è attivo
++ activeStyle={{color: 'green'}} : permette di applicare del CSS in line
+
+### Switch
+
+Tramite questo componente è possibile renderizzare una ed una sola delle rotte presenti, nello specifico la prima il cui path combacia con il link inserito.
+Switch è un wrapper che deve avvolgere le Route ma non il BrowserRouter :
+```js
+<BrowserRouter>
+    <Switch>
+        <Route  />
+    </Switch>
+</BrowserRouter>
+```
+
+
+## Context
+
+I context vengono utilizzati per condividere dei dati globalmente senza dover utilizzare il classico passaggio top down da componenti padri a componenti figli.
+
+il loro utilizzo è molto semplice :
+```js
+/*
+definiamo un Componente che rappresenta il context e i suoi valori di default tramite la funzione createContext()
+*/
+
+const TemaContext = React.createContext('light');
+
+/*
+In questo modo abbiamo definito un Context relativo al tema dell'app 
+*/
+
+class App extends React.Component {
+
+    render(){
+        return(
+            /*
+            Utilizziamo il componente definiamo il wrapper Provider dove possiamo riassegnare il valore che avevamo di default
+            */
+            <TemaContext.Provider value='dark' >
+                <Componente1 />
+            </UserIDContext.Provider>
+        )
+    }
+}
+
+/*
+ Una volta definito una serie di sotto componenti del Componente1 andiamo a vedere come richiamare la variabile che definisce il tema in uno dei sotto componenti.
+*/
+
+//un primo metodo è 
+
+class ComponenteN extends React.Component {
+
+    /*
+    Utilizzando le parole chiavi andiamo a richiamare il context
+    */
+    static contextType = TemaContext;
+
+
+    render(){
+        /*
+        Per leggere il valore della variabile basta utilizzare la forma this.context
+        */
+        return <button className={this.context}>
+    }
+}
+
+
+```
+
+
+
+## Hooks
+
+Gli hooks sono un nuovo metodo per implementare gli stati di un componente utilizzando le funzioni invece delle classi e sono disponibili dalla versione di React 16.8.
+
+Normalmente in react se bisogna sviluppare un componente che al suo interno deve contenere delle variabili proprie e che debbano essere utilizzare per il ri-rendering dello stesso l'unica soluzione è quella di definirlo come una classe che estende React.Component. Con gli hooks superiamo questo presupposto per poter estendere le stesse funzionalità dei componenti definiti tramite il costrutto class ai componenti che sono sviluppati tramite le funzioni.
+
+Gli hooks non nascono solo per rendere interscambiabile il concetto di classe e di funzione nella deinizione di un componente ma, per risolvere una serie di problematiche tra cui la definizione dei this di JS che ha un comportamento atipico rispetto alle altre definizioni di classe di altri linguaggi, per la gestione dello stato di un componente per renderlo riutilizzabile senza dover ogni  volta andare a valutare tutte le logiche di un componente prima di poterlo riutilizzare e altri fattori.
+
+Hooks, come il nome propone, sono delle "ancore" cioè funzioni che legano uno stato ad un componente definito tramite una funzione.
+
+Di hooks ce ne sono alcuni qui l'elenco :
+
++ Basic Hooks
+    + useState
+    + useEffect
+    + useContext
+
++ Additional Hooks
+    + useReducer
+    + useCallback
+    + useMemo
+    + useRef
+    + useImperativeHandle
+    + useLayoutEffect
+    + useDebugValue
+
+In questa trattazione vedremo solo quelli che utilizzerò nei progetti.
+
+### useState
+
+Come nel caso dei componenti definiti con le classi questo hook rappresenta la parte di codice :
+```js
+this.state = {
+    ...
+}
+```
+
+**useState** viene richiamato come segue : 
+```js
+import React, {useState} from 'react';
+
+function foto(){
+    const [immagini, setImmagini] = useState([]);
+}
+```
+questo hook ha come argomento la tipologia di variabile vera e propria e ritorna un array con un riferimeto alla variabile di stato e una funzione per il settaggio.
+
+tramite questo hook andiamo quandi a creare uno stato della funzione e per poterlo utilizzare basta richiamare l'array immagini :
+```js
+import React, {useState} from 'react';
+
+function foto(){
+    const [immagini, setImmagini] = useState([]);
+
+
+    return(
+        <div>
+            <ul>
+                {
+                    immagini.map(immagine =>{ 
+                        return(<li key={immagine.id}>
+                                    <img src={immagine.url}>
+                               </li>)
+                        }
+                    )
+                }
+            </ul>
+        </div>
+    )
+}
+```
+
+In questo momento lo stato raggiungibile tramite la variabile immagini è un array vuoto, per poter inserire un array di immagini che contengano questi valori bosogna effettuare un caricamento e supponiamo che esso viene fatto a mezzo di API da un sito, per poter gestire questa situazione utilizziamo un alto hook che emula il comportamento del lifecycle definto nei componenti basati sulle classi, questo è useEffect.
+
+
+
+### useEffect
+
+Questo hook ha lo stesso utilizzo di componentDidMount, componentDidUpdate e componentoWillUnmount e viene utilizzato nel seguente modo :
+```js
+import React, {useState, useEffect} from 'react';
+
+function foto(){
+    const [immagini, setImmagini] = useState([]);
+
+    useEffect( () => {
+        /*
+        tutto ciò che inseriamo in questa parte della funzione verrà eseguito con lo stesso criterio di 
+        componentDidMount e componentDidUpdate
+        */
+        return () => {
+            /*
+            tutto ciò che viene inserito qui viene eseguito con gli stessi criteri di componentWillUnmount
+            */
+        };
+    },
+    /*
+        questo array rappresenta le variabili che useEffect utilizza per decidere quale parte del suo codice deve lanciare, se non ci sono varibili allora verrà lanciato solo al mount del componente
+    */ 
+    [input]
+    )
+} 
+```
+
+Un esempio pratico può essere il seguente :
+```js
+import React, {useState, useEffect} from 'react';
+
+function foto(){
+    const [immagini, setImmagini] = useState([]);
+
+    const immaginiURL = "http://miosito.bu/immagini"
+
+    useEffect( () => {
+
+        /*
+        con la chiamata fatch andiamo a scaricare il file contenuto nell'url, con il primo then
+        andiamo a trasformare il contenuto scaricato in un json
+        con l'ultimo then andiamo ad inserire il contenuto del json nella variabile di stato immagini 
+        attraverso la funzione che è stata ritornata da useState
+        */
+        fatch(immaginiURL).
+        then(res => res.json()).
+        then(immagini => {
+            setImmagini(immagini.slice(0,20))//per ritornare solo una parte delle immagini 
+        });
+        
+        return () => {
+           
+        };
+    }, []) //inserendo le parentesi quadre vuote andiamo ad indicare che useEffect si deve comportare come componentDidMount se avesimo omesso le parentesi quadre si sarebbe avviato un ciclo infinito di chiamate dovute all'equivalente di componentDidUpdate che sarebbe stato richiamato poiché c'è stato un aggiornamento delle variabili.
+} 
+```
+
+useEffect per sua natura non supporta callback asincrone ma nel corpo della callback è possibile utilizzarle.
+
+In una stessa funzione si possono gestire più state e più effetti e anche renderli dipendenti tra loro.
+
+### useContext
+
+É possibie utilizzare useContext per poter prendere i dati dal context provider in un sotto componente contenuto in questo wrapper.
+
+Questo metodo prevede una prima fase di definizione standard presentata nel capitolo sul Context e la funzione useContext verrà utilizzata solo nel componente per ottenere il volare :
+```js
+ const tema = useContext(TemaContext);  
+```
+al posto della dicitura :
+```js
+static contextType = TemaContext;
+```

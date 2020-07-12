@@ -1,7 +1,9 @@
  
 # Manuali
 
-Questo è il repository dove inserisco tutta la documentazione che produco durante lo studio di linguaggi e framework.  
+Questo è il repository dove inserisco tutta la documentazione che produco durante lo studio di linguaggi e framework. 
+Il mio obiettivo è quello di avere una documentazione sintetica che mi permetta di verificare velocemente la correttezza di ciò che scrivo.
+
 Attualmente sono presenti i seguenti documenti :
 + AWS :
     + Elenco di ceritficazioni con gli argomenti 
