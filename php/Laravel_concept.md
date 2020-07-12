@@ -653,16 +653,3 @@ Per il plugin basta semplicemente ricercare la parola CORS sul motore di ricerca
 
 ## 
 
-
-
-
-
-
-## 
-
-
-
-
-## Cose da approfondire 
-Collection 
-sicuramente mi devo leggere per intero la documentazione
