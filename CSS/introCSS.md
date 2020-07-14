@@ -339,3 +339,168 @@ h1, .classe, div:after {
 ```
 
 # Stili
+Tramite gli stili possimo mofificare molti aspetti quali :
++ sfondo
++ testo 
++ liste
++ tabelle
++ gruppi e layout 
+    + box model 
+    + dimensioni
+    + posizionamento
+
+## Dimensioni
+Gli elementi possono essere dimensionati secondo molte unità e sono :
++ %, percentuale rispetto alla dimensione dell'elemento che lo contiene
++ in, pollici
++ cm, centimetri
++ mm, millimetri
++ px, pollice
++ pt, 1pt=1/72in
++ em, è una proporzione rispetto al font corrente dell'utente che visita il sito dove 1 em è la dimensione di quel font
+
+## Colore
+I colori possono essere espressi come :
++ nome in inglese
++ base RGB con un valore che va da 0 a 256 per ogni colore
++ RGB esadecimale #000000 sono 6 cifre 2 per ogni colore e i valori vanno da 00 a FF 
++ RGB decimale (255,255,255)
+
+É possibile gestire anche la trasparenza tramite :
++ attributo **opacity** con valori tra 0 trasparente e 1 senza trasparenza
++ dalla versione CSS3 si può definire come RGBA rgba(255,255,255,0.3)
+
+## Background
+
+La proprietà **background-color** viene usata per definire uno sfondo, un esempio può essere il seguente :
+```css
+body {
+    background-color: (100,100,100,0.2);
+}
+```
+Il colore va sempre ponderato in funzione del testo che va inserito.
+
+La proprietà **background-image** viene usata per inserire un immagine di sfondo ad un componente, essa viene ripetuta sugli assi x ed y in funzione della sua dimensione.
+Un esempio di utilizzo è il seguente :
+```css
+body {
+    background-image : url('background-image.png'); /*inserisci immagine di sfondo*/
+    background-repeat: repeat-x;/*ripeti solo sull'asse x repeat-y solo su y no-repeat non ripetere*/
+    background-position : top; /*center bottom asse y e left center rigth asse y default center entrambi (center-center) oppure tramite le dimensioni proposte prima*/
+}
+```
+
+## Testo 
+Per il testo ci sono molti attributi e sono :
++ `color`, colore del testo
++ `text-align`, allineamento (left, right, center, justify)
++ `text-decoration`, (overline, line-through, underline)
++ `text-indent`, indentazione spazio tra il margine sinistro ed il testo espresso in valori presentati prima (px,pt ecc.)
+
++ Font opzioni
+    + `serif`, caratteri con dei prolungamenti finali (con grazia i senza grazia | ) migliorano la lettura
+    + `sans-serif`, senza le grazie
+    + `monospace`, tutti i  caratteri sono della stessa larghezza
+    + `cursive`, font come se scritto a mano 
+    + `fantasy`, modo a se da interpretare
++ Font proprietà
+    + `font-family: "roboto" , serif;`, come nell'esempio seleziona il font  
+    **meglio definire una lista dei font che si vogliono utilizzare poiché non è detto che il browser li supporti** 
+    + `font-style`, **normal** come dice il nome **italic** corsivo **oblique** simile al corsivo
+    + `font-size`, dimensione in pt, px ecc
+    + `font-weight`, **bold** grassetto **normal**   **bolder** più grassetto **ecc**
+
+## Link
+Si possono applicare tutte le regole per il testo ma ci sono in più :
++ le PseudoClassi
+    + `a:link`, stato normale
+    + `a:visited`, link visitati e presenti nella hystory
+    + `a:hover`, quando il puntatore è sul link
+    + `a:active`, quando è cliccato
+
+## Lista e Tabelle
+
+Le liste vengono definite nell'HTML come :
+```html
+<ul>
+    <li> </li><!-->liste non ordinate<-->
+    <ol> </ol><!-->liste ordinate<-->
+</ul>
+```
+
+Per le liste abbiamo le seguenti proprietà :
++ `list-style-type`, **decimal** **lower-alpa** **lower-roman** **upper-alpa** **upper-roman** alpa lettere roman numeri romani per le liste ordinate
++ `list-style-type`, **none** nessun simbolo **circle** cerchio vuoto **disc** pallino default **square** quadrato per le liste non ordinate
++ `list-style-image : url(url-image.jpg)`, al posto del simbolo iniserisce un immagine
++ `list-style-position`, posizione del bullet rispetto al testo 
+
+
+Le proprietà delle tabelle sono :
++ `border-collapse`, inserendo il valore **collapse** permette di far coincidere i bordi di due colonne adiacenti
+
+
+# Box Model
+Ogni elemento in HTML può essere considerato un rettangolo e nel CSS questo rettangolo è componsto come l'immagine seguente : 
+![](../immagini/boxmodel.png) 
+
+Per definre le dimensioni di margin, border e padding possiamo controllare i songoli lati tramite le proprietà :
+`margin-top : 10px;` oppure possiamo scrivere `margin` e in funzione del numero di valori che passiamo andiamo a dare indicazioni come ad esempio : `margin : 10px` tutti  i lati hanno un margine di 10px, `margin: 25px 50px 75px 100px; ` top = 25, right = 50, bottom = 75 e left = 100.
+
+L'unica eccezzione è il **content** di cui possiamo definire solo : `width` e `height`.
+
+un ultimo parametro che non abbiamo nominato e **auto** che lascia al browser la scelta delle dimensioni.
+
+Quindi l'altezza e la larghezza totale del componente è data dalla somma di tutte queste parti.
+
+altre proprietà sono :
++ `border-style`, **dotted** puntini, **dashed** trattini, **solid** bordo unico, **double** due linee di bordo, **none** senza, **hidden** nascosto, ecc.
+
+
+# Display
+Rappresenta la proprietà che regola come un elemento viene visualizzato. 
+le opzioni sono :
++ `block`, l'elemento prende tutto lo spazio disponibile e viene aggiunta un interruzione di riga prima e dopo di lui
++ `inline`, come prima ma senza interruzione di riga
++ `none`, nasconde l'elemento
++ `inline-block`, elemento inline ma si può regolare tramite le proprietà del box model
+
+I valori di default associati alle opzioni sono collegati all'elemento HTML :
++ **block** h1...h6,p,div,ecc
++ **inline** a,span,em,strong,ecc
+
+Tramite display è possibile suddividere la pagina come una tabella ma senza dover utilizzare il tag table di HTML.
+
+![](../immagini/displaytable.png)
+
+tramite le proprietà `table`, `table-row` e `table-col`.
+
+Per nascondere un elemento ci sono 2 possibilità : 
++ `visibility: hidden`, non mostra l'elemento ma lascia lo spazio 
++ `display : none`, nasconde l'elmento e lo spazio a lui dedicato
+
+# Posizionamento
+
+É possibile definre un posizionamento degli elelementi all'interno della pagina tramite la proprietà `position`.
+Questa proprietà può assumere vari valori tra i quali :
++ `static`, gli elementi vengono posizionati seguendo il flusso normale dell'HTML (default)
++ `fixed`, rimane nella stessa posizione anche se scorriamo nella pagina
++ `relative`, relative agli altri compinenti e ha come input **top, bottom, left, right**
++ `absolute`, ha un posizionamento relativo rispetto al primo elemento che lo contiene che ha un valore diverso da static, nel caso ne ce ne siano sarà posizionato rispetto alla radice e cioè il tag <html>, come per relative ha la possibilità di poter essere posizionato con le opzioni **top, bottom, left, right**
+
+Possiamo anche far in modo che due o più elementi siano sovrapposti per definire quale deve essere in primo piano rispetto ad un altro si utilizza la proprietà `z-index`, prende valori da 0 a 1 e se due blocchi hanno lo stesso valore allora si segue lo stesso flusso dell'HTML.
+Una tecnica con la quale bisognerebbe avere un po di dimestichezza è la **tecnica del pittore** dove si dipingono prima gli oggetti più distanti per poi arrivare a quelli in primo piano.
+
+## Float
+
+Permette di spostare un elemento dal normale flusso del DOM e di posizionarlo a destra o a sinistra del contenitore che lo contiene e gli altri componenti lo circonderanno in funzione del suo posizionamento.
+Le opzioni che prende questa proprietà sono :
++ right 
++ left 
++ none 
+
+Il browser quindi posizionerà gli altri elementi nel restante spazio e poi andra a capo.
+Per evitare questo addossamento possiamo usare la proprietà `clear` che può assumere i seguenti valori:
++ `right`, non si addossa a destra 
++ `left`, non si addossa a sinistra
++ `both`, non si addossa da entrambe le parti 
++ `none`, seguono il flusso
