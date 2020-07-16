@@ -369,15 +369,23 @@ I colori possono essere espressi come :
 É possibile gestire anche la trasparenza tramite :
 + attributo **opacity** con valori tra 0 trasparente e 1 senza trasparenza
 + dalla versione CSS3 si può definire come RGBA rgba(255,255,255,0.3)
++ altre opzioni supportate sono :
+    + `inherit`, eredita il colore dall'elemento padre
+    + `initial`, utilizza il colore di defaul del browser
+    + `unset`, elimina ogni definizione di colore
+    + `currentColor`, eredita il colore da un elemento fratello o padre non ancora supportato su smartphone 
 
 ## Background
 
 La proprietà **background-color** viene usata per definire uno sfondo, un esempio può essere il seguente :
 ```css
 body {
-    background-color: (100,100,100,0.2);
+    background-color: rgba(100,100,100,0.2);
 }
 ```
+
+un opzione per il colore è **opacity** può assumere valori tra 0 e 1 e rappresenta l'ultimo valore di rgba.
+
 Il colore va sempre ponderato in funzione del testo che va inserito.
 
 La proprietà **background-image** viene usata per inserire un immagine di sfondo ad un componente, essa viene ripetuta sugli assi x ed y in funzione della sua dimensione.
@@ -386,7 +394,12 @@ Un esempio di utilizzo è il seguente :
 body {
     background-image : url('background-image.png'); /*inserisci immagine di sfondo*/
     background-repeat: repeat-x;/*ripeti solo sull'asse x repeat-y solo su y no-repeat non ripetere*/
-    background-position : top; /*center bottom asse y e left center rigth asse y default center entrambi (center-center) oppure tramite le dimensioni proposte prima*/
+    background-position : top; /*center bottom asse y e left center rigth asse x default center entrambi (center-center) oppure tramite le dimensioni proposte prima*/
+    background-size : 100px 100px; /*definisce la dimensione del background per le immagini si può anche impostare auto */
+    background-attachment : fixed ; /*lo sfondo è fisso e non scorre con l'immagine oppure con l'opzione di default scroll*/
+    background-origin : border-box; /*classico padding nullo si posizione nel elemento in alto a sinistra content-box si centra nel box */
+
+    background: #ffffff url("img_tree.png") no-repeat right top; /*versione semplificata con tutte le opzioni*/
 }
 ```
 
@@ -404,7 +417,7 @@ Per il testo ci sono molti attributi e sono :
     + `cursive`, font come se scritto a mano 
     + `fantasy`, modo a se da interpretare
 + Font proprietà
-    + `font-family: "roboto" , serif;`, come nell'esempio seleziona il font  
+    + `font-family: roboto-serif, Arial;`, come nell'esempio seleziona il font  
     **meglio definire una lista dei font che si vogliono utilizzare poiché non è detto che il browser li supporti** 
     + `font-style`, **normal** come dice il nome **italic** corsivo **oblique** simile al corsivo
     + `font-size`, dimensione in pt, px ecc
@@ -455,6 +468,7 @@ Quindi l'altezza e la larghezza totale del componente è data dalla somma di tut
 altre proprietà sono :
 + `border-style`, **dotted** puntini, **dashed** trattini, **solid** bordo unico, **double** due linee di bordo, **none** senza, **hidden** nascosto, ecc.
 
+In generale esistono anche proprietà combinate formate ad esempio : `border-bottom-color : black;` in questo modo assegneremo solo al bordo inferiore il colore black
 
 # Display
 Rappresenta la proprietà che regola come un elemento viene visualizzato. 
@@ -504,3 +518,125 @@ Per evitare questo addossamento possiamo usare la proprietà `clear` che può as
 + `left`, non si addossa a sinistra
 + `both`, non si addossa da entrambe le parti 
 + `none`, seguono il flusso
+
+
+# Responsive
+
+Tra i pattern più utilizzati per definire una pagina web abbiamo due modelli principali e sono :
++ Layout fluido, si adatta allo schermo che lo deve renderizzarlo
++ Layout fisso, si definiscono le dimensioni e per ogni elemento e su schermi differenti abbiamo che si mantengono le proporzioni
+
+Ognuno di essi ha 3 varianti e sono :
++ due colonne con la barra di navigazione a sinistra
++ due colonne con la barra di navigazione a destra 
++ tre colonne
+
+![](../immagini/layoutpagina.png)
+
+Tramite le **media query** è possibile definire il comportamento del browser in funzione dello schermo sulla quale il sito  deve essere renderizzato.
+
+![](../immagini/mediaquery.jpg)
+
+Questi vengono definiti **breackpoint** e vengono utilizzati per definire quali insiemi di regole devono essere applicate in funzione dello schermo, questi delle immagini sono solo dei punti di riferimento.
+
+Per definire questi breackpoint si può far riferimento su 4 proprietà :
++ min width 
++ max width
++ min height
++ max height
+
+Tramite queste proprietà possiamo modificare il layout in funzione dello schermo, ad esempio potremmo utilizzare un layout a 2 colonne per i pc fissi con schermi superiori a 1024 e il layout ad una sola colonna per quelli inferiori,
+Oppure modificare il font, far collassare i link in un unico pulsante.
+
+Un metodo è quello di suddividere la pagina in 12 colonne di dimensioni variabili in funzione dello schermo che dovrà mostrare il sito.
+
+Per poter suddividere in maniera semplice ed intuitiva queste colonne e per gestire le dimensioni in maniera naturale possiamo utilizzare la proprietà `box-sizing : border-box;` cosi facendo possiamo andare a dimensionare le dimensioni di border, margin e padding sulla base della dimensione delle colonne.
+
+Un esempio è il segunete :
+```css
+/*Addossamento a sinistra di tutte le colonne*/
+[class*="col-"] {
+    float : left;
+}
+
+/*dimensionamento di tutte le colonne*/
+.col-1 {width : 8.33 %;}
+.col-2 {width : 16.66 %;}
+.col-3 {width : 25 %;}
+.col-4 {width : 33.33 %;}
+.col-5 {width : 41.66 %;}
+.col-6 {width : 50 %;}
+.col-7 {width : 58.33 %;}
+.col-8 {width : 66.66 %;}
+.col-9 {width : 75 %;}
+.col-10 {width : 83.33 %;}
+.col-11 {width : 91.66 %;}
+.col-12 {width : 100 %;}
+```
+Per poter applicare questo tipo di regole bisogna :
++ fai in modo che ogni riga sia contenuta in un div largo 100%
++ il numero delle colonne per riga devono sempre essere uguali a 12 o al numero di colonne che si è scelto 
++ Anche se non si rispettano le regole proposte il codice css risulta comunque sintatticamente corretto
+
+Un esempio di applicazione è il segunete :
+```html
+<!-->Definizione di una riga <-->
+<div class="row">
+    <div class="col-3"> Menu laterale </div> <!--> 25% <-->
+    <div class="col-9"> Contenuto </div> <!--> 75% <-->
+</div>
+```
+
+```css
+/* CSS per la riga*/
+.row::after {
+    content : "";
+    clear : both;
+    display : table;
+}
+```
+
+In generale per ogni scermo si vanno a sovrascrivere le classi delle colonne. Un esempio è il seguente :
+```css
+/*visualizzazione smartphone*/
+[class*="col-"] {
+    width : 100%;
+}
+
+/*visualizzazione tablet*/
+
+@media only screen and (min-width : 600px) {
+    .col-t-1 {width : 8.33 %;}
+    .col-t-2 {width : 16.66 %;}
+    .col-t-3 {width : 25 %;}
+    .col-t-4 {width : 33.33 %;}
+    .col-t-5 {width : 41.66 %;}
+    .col-t-6 {width : 50 %;}
+    .col-t-7 {width : 58.33 %;}
+    .col-t-8 {width : 66.66 %;}
+    .col-t-9 {width : 75 %;}
+    .col-t-10 {width : 83.33 %;}
+    .col-t-11 {width : 91.66 %;}
+    .col-t-12 {width : 100 %;}
+}
+
+/*visualizzazione desktop*/
+
+@media only screen and (min-width : 1024px) {
+    .col-1 {width : 7.33 %;}
+    .col-2 {width : 15.66 %;}
+    .col-3 {width : 25 %;}
+    .col-4 {width : 32.33 %;}
+    .col-5 {width : 40.66 %;}
+    .col-6 {width : 50 %;}
+    .col-7 {width : 57.33 %;}
+    .col-8 {width : 65.66 %;}
+    .col-9 {width : 75 %;}
+    .col-10 {width : 82.33 %;}
+    .col-11 {width : 90.66 %;}
+    .col-12 {width : 100 %;}
+}
+
+```
+
+Quando andremo ad applicare i valori ai div andremo ad inserire tutte e due le classi colonna cosi in funzione della dimensione dello schermo il brower adattera gli elementi
