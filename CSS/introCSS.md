@@ -640,3 +640,21 @@ In generale per ogni scermo si vanno a sovrascrivere le classi delle colonne. Un
 ```
 
 Quando andremo ad applicare i valori ai div andremo ad inserire tutte e due le classi colonna cosi in funzione della dimensione dello schermo il brower adattera gli elementi
+
+
+# Ordine di applicazione delle regole
+
+Le regole CSS hanno un ordine di applicazione ed in funzione del caso avremo che alcune di esse saranno più importanti di altre.
+
+L'ordine con la quale le regole vengono applicate è il segunete :
++ Prima le regole con il valore `!important` che vengono sempre applicate
++ Seconde quelle che hanno un alta specificità 
++ terze quelle per ordine nel file (le ultime regole hanno più valore delle prime)
+
+La prima e la terza sono semplici concentriamoci sulla seconda.
+
+La **Specificità** si basa su di un sistema a punti che viene assegnato al selettore delle regole :
++ l'utilizzo del tag style inserito nell'HTML ha un valore di 1000
++ il selettore #id ha un valore di 100 
++ Per ogni : selettore di classe, selettore di attributo o pseudoClasse il valore di specificità viene incrementato di 10
++ per ogni tag o pseudoElementi il valore aumenta di 1
