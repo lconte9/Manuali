@@ -457,13 +457,24 @@ Ogni elemento in HTML può essere considerato un rettangolo e nel CSS questo ret
 ![](../immagini/boxmodel.png) 
 
 Per definre le dimensioni di margin, border e padding possiamo controllare i songoli lati tramite le proprietà :
-`margin-top : 10px;` oppure possiamo scrivere `margin` e in funzione del numero di valori che passiamo andiamo a dare indicazioni come ad esempio : `margin : 10px` tutti  i lati hanno un margine di 10px, `margin: 25px 50px 75px 100px; ` top = 25, right = 50, bottom = 75 e left = 100.
+`margin-top : 10px;`, oppure possiamo scrivere `margin` e in funzione del numero di valori che passiamo andiamo a dare indicazioni come ad esempio : `margin : 10px` tutti  i lati hanno un margine di 10px, `margin: 25px 50px 75px 100px; ` top = 25, right = 50, bottom = 75 e left = 100.
 
 L'unica eccezzione è il **content** di cui possiamo definire solo : `width` e `height`.
 
-un ultimo parametro che non abbiamo nominato e **auto** che lascia al browser la scelta delle dimensioni.
+Un altra proprietà che si utilizza in combinazione con il padding e border è **box-sizing**, questa proprietà permette di integrare la dimensione di queste proprietà nel content dell'elemento. Le opzioni sono :
++ `content-box`, opzione di default, la dimensione totale vine calcolata come somma dei singoli elementi
++ `border-box`, la dimensione totale è data da width e height del content e padding e border sono interni a questi valori 
 
-Quindi l'altezza e la larghezza totale del componente è data dalla somma di tutte queste parti.
+un ultimo parametro che non abbiamo nominato e **auto** che lascia al browser la scelta delle dimensioni, ad esempio supponiamo di voler centrare un elemento nella pagina possiamo scrivere il segunete codice :
+```css
+.center {
+    margin-left : auto ;
+    margin-right: auto;
+}
+```
+Attenzione nell'utilizzo per i browser mobili.
+
+L'altezza e la larghezza totale del componente è data dalla somma di tutte queste parti.
 
 altre proprietà sono :
 + `border-style`, **dotted** puntini, **dashed** trattini, **solid** bordo unico, **double** due linee di bordo, **none** senza, **hidden** nascosto, ecc.
@@ -491,6 +502,21 @@ tramite le proprietà `table`, `table-row` e `table-col`.
 Per nascondere un elemento ci sono 2 possibilità : 
 + `visibility: hidden`, non mostra l'elemento ma lascia lo spazio 
 + `display : none`, nasconde l'elmento e lo spazio a lui dedicato
+
+
+# vertical-align
+Server per spostare un elemento sull'asse verticale. Il vertical-align si può usare solo nei blocchi : inline, inline-block e nelle celle delle tabelle definite nel css.
+
+Le opzioni sono :
++ `10px`, inserire un qualsiasi valore dimensionale che se positivo alzera il blocco del numero dei px dalla linea base degli oggetti inline
++ `baseline`, allinea l'oggetto dalla linea base degli altri elementi inline, il suo funzionamento può differire in funzione del tag e da browser a browser
++ `sub`, si allinea con il pedice degli altri elementi inline
++ `super`, si allinea con l'apice degli altri elementi inline
++ `text-top`, si allinea con la parte alta del font
++ `text-bottom`, si allinea con la parte bassa del font
++ `middle`, si allinea con la metà dell'altezza deigli altri elementi inline
++ `top`, allinea la parte superiore con la parte superiore dell'intera linea
++ `bottom`, allinea la parte inferiore con la parte inferiore dell'intera linea
 
 # Posizionamento
 
@@ -658,3 +684,15 @@ La **Specificità** si basa su di un sistema a punti che viene assegnato al sele
 + il selettore #id ha un valore di 100 
 + Per ogni : selettore di classe, selettore di attributo o pseudoClasse il valore di specificità viene incrementato di 10
 + per ogni tag o pseudoElementi il valore aumenta di 1
+
+
+# cursor
+Permette di modificare il puntatore all'interno della nostra finestra
+
+ha tante possibili opzioni quindi rimando alla documentazione tutto l'elenco, ma vedremo quelli più utilizzati.
++ `pointer`, la classima manina che viene visualizzata sui bottoni
++ `auto`, puntatore di  default definito dal browser
++ `crosshair`, la croce
++ `not-allowed`, divieto di cliccare
++ `grab`, mano aperta
++ `url(cursore.cur), pointer`, prende un elemento .cur, .png, .svg, altri altrimenti utilizza pointer non supportato da tutti i browser, è possibile definire due valori numerici che rappresentano 
