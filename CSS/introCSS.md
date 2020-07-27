@@ -302,6 +302,8 @@ Alcuni esempi sono i seguneti :
 | tag:active | quando l'elemento è attivo es un link in una single page application del menu |
 | tag:focus | qunado un elemento viene selezionato |
 
+**NB se per un elemento abbiamo bisogno di applicare in serie più di una pseuodoClasse allora ricordiamo sempre di rispettare l'ordine che abbiamo nell'elenco**
+
 L'elenco completo potete trovarlo sul sito del [W3School](https://www.w3schools.com/css/css_pseudo_classes.asp)
 
 Mentre gli **PseudoElementi** vengono utilizzati per inserire elementi tramite il css.
@@ -696,3 +698,6 @@ ha tante possibili opzioni quindi rimando alla documentazione tutto l'elenco, ma
 + `not-allowed`, divieto di cliccare
 + `grab`, mano aperta
 + `url(cursore.cur), pointer`, prende un elemento .cur, .png, .svg, altri altrimenti utilizza pointer non supportato da tutti i browser, è possibile definire due valori numerici che rappresentano 
+
+# Minify
+É l'operazione che permette di ridurre la dimensione del file.css per agevolare il download del sito, consiste nel rimuovere gli spazi e gli accapo che normalemente inseriamo nei nostri codici per la legibilità.

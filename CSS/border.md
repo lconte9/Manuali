@@ -47,7 +47,10 @@ h1 {
 }
 ```
 
-
-
-
-**Tutte queste opzioni supportano le variabili globali**
+# border-radius
+Permette di arrotondare i bordi di immagini o elementi, prende in ingresso delle dimensioni che rappresentano il raggio della curvatura. Con quest opzione possiamo anche creare degli elementi che sono dei cerchi con la segunete dicitura :
+```css
+.cerchio {
+    border-radius : 100%;
+}
+```
