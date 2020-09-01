@@ -20,7 +20,7 @@ Per poterle utilizzare inserire queste ulteriori righe alla fine del file index 
 
 ## Bootstrap integrato in React
 Un altra soluzione è quella di integrare Bootstrap come un componente di React lanciando i comandi:  
-`npm install --save react-bootsrap bootstrap`
+`npm install --save react-bootstrap bootstrap`
 
 e poi inserendo nel index.js il segunete import:  
 ```js

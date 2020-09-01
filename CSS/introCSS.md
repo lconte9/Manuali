@@ -304,7 +304,7 @@ Alcuni esempi sono i seguneti :
 
 **NB se per un elemento abbiamo bisogno di applicare in serie più di una pseuodoClasse allora ricordiamo sempre di rispettare l'ordine che abbiamo nell'elenco**
 
-L'elenco completo potete trovarlo sul sito del [W3School](https://www.w3schools.com/css/css_pseudo_classes.asp)
+L'elenco completo potete trovarlo sul sito di [mozilla](https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-classes)
 
 Mentre gli **PseudoElementi** vengono utilizzati per inserire elementi tramite il css.
 Si basano sul concetto che il CSS non inserisce realmente un elemento HTML ma che in realtà le regole che definiamo possono essere considerate esse stesse come elementi.
