@@ -74,7 +74,7 @@ Inoltre con il primo metodo possiamo importate i componenti e rinominarli tramit
 Quando vogliamo utilizzare un componente in un altro basta importarlo e poi inserirlo nel costrutto in JSX ne segunete modo :
 ```js
 import React from 'react';
-import Comp from 'file.js';
+import Comp from './file';
 
 export default function App(){
 

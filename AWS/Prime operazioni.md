@@ -42,3 +42,4 @@ Una volta entrato nella console, nella schermata principale è possibile selezio
 
 # IAM
 Identity access management sono software per l'autenticazione e per la getione dei permessi di un utente su di una piattaforma. IAM di AWS è un servizio globale per la gestione delle identità.
+
