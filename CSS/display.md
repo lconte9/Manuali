@@ -57,7 +57,7 @@ Un semplice esempio è il seguente :
 }
 
 .head {
-  display:table-header;
+  display:table-header-group;
   background-color: black;
   color: white;
   border : 1px solid black;
@@ -68,6 +68,7 @@ Un semplice esempio è il seguente :
   display:table-row;
   background-color: aqua;
   border : 1px solid black;
+  
 }
 
 .cell {
@@ -83,3 +84,7 @@ banalmente l'effetto finale è il segunente :
 ![](../immagini/tabellaCSS.png)
 
 Tutte le opzioni table sono supportate da tutti i browser
+
+
+
+# Grid

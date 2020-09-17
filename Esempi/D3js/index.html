@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="it">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewpoint" content="width-device-width, initial-scale-1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie-edge">
+        
+        <title>
+            D3.js Tutorial
+        </title>
+        <script src="https://d3js.org/d3.v5.min.js"></script>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+
+        <!--
+
+        <script>
+            d3.select("body")//seleziona il primo elemento passato come oggetto
+                .append("p")//inserisci un tag p e ne restituisce un riferimento
+                .text("Nuovo paragrafo"); //inserisce nel riferimento il valore di testo passato come argomento
+        </script>
+
+        -->
+
+        <!--
+
+        <script>
+
+            let dataset = [3, 5, 8, 12, 18, 11, 8];//info da graficare
+
+            d3.select("body")//seleziona il primo elemento passato come oggetto
+                .selectAll("p")//seleziona tutti gli elementi p presenti nel body ma in questo caso non ce ne sono 
+                .data(dataset)//equivale ad un ciclo for effettuato sul dataset utilizzando il suoi indice 
+                              //ed esegue il codice succesivo un numero pari alla dimensione dell'array
+                              //permette anche l'accesso ai dati contenuti (simile a map js)
+                .enter()//crea un palceholder al posto dei paragrafi p inesistenti 
+                .append("p")
+                .text(function(d) { //d rappresenta l'elemento del dataset
+                    return d;
+                })
+                .style("color", function(d){
+                    if(d>10){
+                        return "red";
+                    }else{
+                        return "blue";
+                    }
+                });//modifica il css dell'elemento HTML
+        </script>
+
+        -->
+
+        <script>
+
+            let dataset = [3, 5, 8, 12, 18, 11, 8];//info da graficare
+
+            d3.select("body")
+                .selectAll("div")
+                .data(dataset)
+                .enter()
+                .append("div")//inserisce un elemento div
+                .attr("class", "bar")//aggiunge all'elemento l'attributo class con valore bar presente nel file style.css
+                .style("height", function(d){
+                    var barHeight = d*5;    //moltiplica il valore nel dataset moltiplicandolo per 5 per rendere visibile 
+                                            //il valore sarà proporzionato alla dimensione che si vuole ottenere del grafico
+
+                    return barHeight + "px";//restuituisce il valore con l'aggiunta della dimensione px
+                })
+        </script>
+
+    </body>
+
+</html>
