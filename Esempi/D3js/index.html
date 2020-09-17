@@ -50,6 +50,8 @@
 
         -->
 
+        <!--
+
         <script>
 
             let dataset = [3, 5, 8, 12, 18, 11, 8];//info da graficare
@@ -67,6 +69,39 @@
                     return barHeight + "px";//restuituisce il valore con l'aggiunta della dimensione px
                 })
         </script>
+
+        -->
+       
+        <script>
+            let dataset = [3, 5, 8, 12, 18, 11, 8];//info da graficare
+
+            let w = 500;    //larghezza dell'svg
+            let h = 100;    //altezza dell'svg
+
+            let svg = d3.select("body").append("svg");//definiamo un riferimento all'elemento svg creato con questo comando
+
+            svg.attr("width", w).attr("height", h); //aggiungiamo gli attributi width e height
+
+            svg.selectAll("rect")//Selezioniamo tutti gli elementi rect (anche se inesistenti)
+                .data(dataset)//per ogni elemento del dataset
+                .enter()//avviamo la sequenza di operazioni anche se gli elementi rect non esistono
+                .append("rect")//creiamo una rect
+                .attr("x", function(d, i){
+                    return i * (w / dataset.length) //diamo come posizione su x il valore dell'indice per la dimensione 
+                                                    //massima per la quale ogni barra entri nello spazio di svg
+                })
+                .attr("y", function(d){ //definiamo il posizionamento verticale come h - l'altezza definita nell'attirbuto
+                    return h -d*5       //height
+                })
+                .attr("width", w / dataset.length) //definiamo la larghezza di ogni rettangolo
+                .attr("height", function(d){       //definiamo l'altezza di ogni elemento con una scala  
+                    return d * 5
+                })
+                .attr("fill", function(d){ //facciamo una variazione cromatica in funzione del peso nel vettore
+                    return "rgb( 0, " + (d *10) + ", 0)"
+                })
+        </script>
+
 
     </body>
 

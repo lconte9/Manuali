@@ -101,3 +101,61 @@ Come risultato abbiamo quindi :
 
 Questo è il funzionamento di base della libreria D3.js  
 
+Con questa libreria è possibile utilizzare gli elementi svg per implementare i grafici utilizzando dei semplici elementi vettoriali come nel seguente esempio :
+```html
+<svg width="500" height="100">
+    <circle cx="200" cy="25" r="20" />
+</svg>
+```
+
+A partire da questo esempio mostriamo come implementare un istogramma con D3js : 
+```html
+ <script>
+    let dataset = [3, 5, 8, 12, 18, 11, 8];//info da graficare
+
+    let w = 500;    //larghezza dell'svg
+    let h = 100;    //altezza dell'svg
+
+    let svg = d3.select("body").append("svg");//definiamo un riferimento all'elemento svg creato con questo comando
+
+    svg.attr("width", w).attr("height", h); //aggiungiamo gli attributi width e height
+
+    svg.selectAll("rect")//Selezioniamo tutti gli elementi rect (anche se inesistenti)
+        .data(dataset)//per ogni elemento del dataset
+        .enter()//avviamo la sequenza di operazioni anche se gli elementi rect non esistono
+        .append("rect")//creiamo una rect
+        .attr("x", function(d, i){
+            return i * (w / dataset.length) //diamo come posizione su x il valore dell'indice per la dimensione 
+                                            //massima per la quale ogni barra entri nello spazio di svg
+        })
+        .attr("y", function(d){ //definiamo il posizionamento verticale come h - l'altezza definita nell'attirbuto
+            return h -d*5       //height
+        })
+        .attr("width", w / dataset.length) //definiamo la larghezza di ogni rettangolo
+        .attr("height", function(d){       //definiamo l'altezza di ogni elemento con una scala  
+            return d * 5
+        })
+        .attr("fill", function(d){ //facciamo una variazione cromatica in funzione del peso nel vettore
+            return "rgb( 0, " + (d *10) + ", 0)"
+        })
+</script>
+```
+Il risultato ottenuto è il seguente :  
+![](../immagini/istogrammaSvgD3.png)
+
+
+# D3 in React
+
+La libreria D3 copre alcune delle funzioni della libreria React come per esempio la renderizzazione dinamica del DOM (creazione, aggiornamento, ed eliminazione) e l'elaborazione dati.
+L'utilizzo di queste due librerie, anche se molto simili, permette di implementare soluzioni che da sole non potrebbero. React permette una gestione semplice di componenti mentre D3 ha un ottima gestione dei dati e delle implementazioni per la parte grafica.
+
+Esistono 3 metodi per l'implementazione di D3 in React e sono :
++ D3 gestisce tutto il componente fornito tramite React compreso la renderizzazione, l'aggiornamento e l'eliminazione
++ React gestisce il grafico e D3 è solo una libreria di implementazione 
++ React gestisce la renderizzazione l'aggiornamento e l'eliminazione mentre D3 gestisce gli attributi
+
+## Approccio con D3
+Questo approccio ha come passaggi i seguneti:  
++ Creare un elemento React come contenitore
++ Integrare il codice D3 per creare ed aggiornare il grafico 
++ 
