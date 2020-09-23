@@ -769,3 +769,151 @@ al posto della dicitura :
 ```js
 static contextType = TemaContext;
 ```
+
+
+
+
+
+
+
+# Refs 
+
+I riferimenti di React sono un modo per accedere in maniera agile ai vari componenti generati nel metodo rendering.
+Nel classico flusso di interazione tra componenti le props giocano un ruolo fondamentale per passare informazioni da padre a figlio. Ma in alcuni casi bisogna modificare espressamente un unico elemento, in questi casi ci vengono in aiuto le ref.
+
+Ci sono alcuni casi specifici per la quale questa modalità gioca un ruolo importante, ad esempio :
++ Gestione dello stato attivo, della sezione di testo o della riproduzione multimediale.
++ Attivazione di animazioni .
++ Integrazione con librerie DOM di terze parti.
+
+Bisognerebbe evitare l'utilizzo di ref per ogni operazione di tipo dichiarativo.
+Un esempio potrebbe essere il passaggio di una funzione quale ad esempio open() che potrebbe essere tranquillamente passata tramite le props. Sembre bene non esagerare con le ref.
+
+I riferimenti vengono creati tramite  **React.createRef()** e applicati tramite l'attibuto **ref** nel jsx, cosi da poter essere utilizzati in tutto il componente.
+Un esempio è il seguente:
+```js
+class MyComponent extends React.Component {
+  constructor(props) {
+    super(props);
+    this.myRef = React.createRef();  
+    }
+
+  render() {
+    return <div ref={this.myRef} />;  
+    }
+}
+```
+
+## Accesso al ref
+
+Per poter accedere e quindi utilizzare il riferimento bisogna ritornare il suo riferimento al nodo del DOM tramite la variabile :
+```js
+const node = this.myRef.current;
+```
+
+Il valore del riferimento varia in base al nodo : 
++ Se il riferimento è un elemento del DOM il nodo rappresenta quell'elemento
++ Se il ref è relativo ad un componente esso restituirà un istanza di classe
++ Non si può utilizzare ref sulle funzioni poiche in js esse non hanno istanze
+
+Gli aggiornamenti del ref vengono effettuati prime delle fasi del lifecyrcle e restituiranno l'elemento nel componentDidMount e nel componentDidUpdate e null quando viene smontato.
+
+Un esempio dell'utilizzo del riferimento è il seguente :
+```js
+class CustomTextInput extends React.Component {
+  constructor(props) {
+    super(props);
+    // create a ref to store the textInput DOM element
+    this.textInput = React.createRef();    
+    this.focusTextInput = this.focusTextInput.bind(this);
+  }
+
+  focusTextInput() {
+    // Explicitly focus the text input using the raw DOM API
+    // Note: we're accessing "current" to get the DOM node
+    this.textInput.current.focus();  }
+
+  render() {
+    // tell React that we want to associate the <input> ref
+    // with the `textInput` that we created in the constructor
+    return (
+      <div>
+        <input
+          type="text"
+          ref={this.textInput} />   
+
+        <input
+          type="button"
+          value="Focus the text input"
+          onClick={this.focusTextInput}
+        />
+      </div>
+    );
+  }
+}
+```
+
+
+## Callback ref
+
+React supporta un altro metodo per definire dei riferimenti cioè tramite una callback o nel costruttore o direttamente nel jsx del componente.
+```js
+class CustomTextInput extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.textInput = null;
+    /*
+    *Con questa arrow function restituiamo un riferimento all'elemento 
+    */
+    this.setTextInputRef = element => {
+        this.textInput = element;    
+        };
+
+    this.focusTextInput = () => {      
+        // Focus the text input using the raw DOM API      
+        if (this.textInput) this.textInput.focus();    };  
+        }
+
+  componentDidMount() {
+    // autofocus the input on mount
+    this.focusTextInput();  }
+
+  render() {
+    // Use the `ref` callback to store a reference to the text input DOM
+    // element in an instance field (for example, this.textInput).
+    return (
+      <div>
+        <input
+          type="text"
+          ref={this.setTextInputRef}        />
+        <input
+          type="button"
+          value="Focus the text input"
+          onClick={this.focusTextInput}        />
+      </div>
+    );
+  }
+}
+```
+
+React chiamarà la callback quando l'elemento viene montato mantenedo sempre la precedenza del ref rispetto alle funzioni di lifecycle. Puoi passare i riferimenti cosi creati anche da un componente ad un altro come nel seguente esempio :
+```js
+function CustomTextInput(props) {
+  return (
+    <div>
+      <input ref={props.inputRef} />    </div>
+  );
+}
+
+class Parent extends React.Component {
+  render() {
+    return (
+      <CustomTextInput
+        inputRef={el => this.inputElement = el}      />
+    );
+  }
+}
+```
+
+
