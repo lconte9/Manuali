@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="it">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewpoint" content="width-device-width, initial-scale-1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie-edge">
+        
+        <title>
+            Scale D3.js Tutorial
+        </title>
+        <script src="https://d3js.org/d3.v5.min.js"></script>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <!--
+        <script>
+            //elenco di frutti con ipotetico valore 
+            let fruits = [
+                {name: "🍊", count: 21},
+                {name: "🍇", count: 13},
+                {name: "🍏", count: 8},
+                {name: "🍌", count: 5},
+                {name: "🍐", count: 3}
+                ]
+
+            //restituisce i simboli degli alimenti
+            console.log(fruits.map(d => d.name))
+            //restituisce i valori per ogni alimento
+            console.log(fruits.map(d => d.count))
+
+            /*
+                Definizione delle scale, supponiamo di voler creare un istogramma orizzontale, avremo uno scale per i 
+                valori numerici che sarà quindi lineare mentre uno su y che rappresenterà una fascia per ogni elemento
+            */
+            let x = f(n)
+            //richiamiamo la scala lineare per i valori di count 
+            x = d3.scaleLinear()
+                    //definiamo il dominio che sarà appunto da 0 al maggior valore tra i count disponibili
+                    .domain([0, d3.max(fruits, d => d.count)])
+                    /*
+                    definiamo il range di visualizzazione calcolato tra il margine sinistro e l'ampiezza dell'svg 
+                    meno il margine destro
+                    */
+                    .range([margin.left, width - margin.right])
+
+                    .interpolate(d3.interpolateRound)
+
+
+            let y = f(i)
+            /*
+            questo scale non avendo valori numerici ipoteticamente continui ma solo valori discreti quali i frutti 
+            utilizziamo lo scaleBand
+            */
+            y = d3.scaleBand()
+                    /*
+                    definiamo il dominio solo che questa volta è solo sul nome e non essendo un dominio numerico non 
+                    andiamo a definire il valore minimo
+                    */
+                    .domain(fruits.map(d => d.name))
+                    //come per x andiamo a definire lo spazio 
+                    .range([margin.top, height - margin.bottom])
+                    //definisce un padding tra le barre
+                    .padding(0.1)
+                    //definsce il padding anche con la scala e non solo tra le barre
+                    .round(true)
+                
+        </script>
+        -->
+
+        
+        
+    </body>
+</html>

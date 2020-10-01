@@ -6,4 +6,4 @@ Leaflet è una libreria che prende le mappe da OpenStreetMap libreria opensource
 Il comando per l'installazione è il seguente:
 `npm install --save leaflet react-leaflet`  
 
-bisonga anche imortare la libreria css di leaflet
+bisonga anche importare la libreria css di leaflet
