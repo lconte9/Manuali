@@ -208,4 +208,153 @@ Per ogni singola istanza possiamo definire diversi security group. PS un consigl
 Se si dovessero presentare problemi di accesso all'istanza di EC2 molto probabilmente c'è qualche problema nel SG.
 Tramite i SG è possibile implementere anche regole legate a diverse istanze che però utilizzano specifici SG permettendo solo tra loro la comunicazione, così facendo si astraggono i permessi legati agli IP legandoli solo ai SG.
 
+# IP pubblico, privato ed elastico
+Ip publico è quell'ip che ti permette di raggiungere una risorsa da qualsiasi punto del web, privato è l'ip che vine utilizzato da una sottorete privata e che ha senso solo nella sottorete, mentre l'ip elastico è un ip publico che puoi ottenere come ip statico da AWS e che puoi utilizzare per le tue istanze. Il modello di ip elastico è poco utilizzato poiché per avere un ip publico stabile puoi utilizzare il servizio di route53 o in maiera molto più trasparente al programmatore il servizio di load balancing che astra completamente l'utilizzo di ip pubblici.
 
+Una volta che effettuiamo l'accesso alla nostra istanza per avere info riguardo la rete possiamo digitare il comando : `ifconfig -a ` ottenendo :  
+```
+[ec2-user@ip-172-31-23-55 ~]$ ifconfig -a
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 9001
+        inet 172.31.23.55  netmask 255.255.240.0  broadcast 172.31.31.255
+        inet6 fe80::ccd:80ff:fe2e:2c92  prefixlen 64  scopeid 0x20<link>
+        ether 0e:cd:80:2e:2c:92  txqueuelen 1000  (Ethernet)
+        RX packets 644  bytes 102224 (99.8 KiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 611  bytes 77151 (75.3 KiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+        inet 127.0.0.1  netmask 255.0.0.0
+        inet6 ::1  prefixlen 128  scopeid 0x10<host>
+        loop  txqueuelen 1000  (Local Loopback)
+        RX packets 0  bytes 0 (0.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 0  bytes 0 (0.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+```
+Il primo blocco definito da eth0 rappresenta le informazioni riguardo la rete privata della nostra istanza. 
+
+Quando fermiamo l'istanza e la riavviamo possiamo notare che se l'ip publico cambia non cambia quello privato che resta sempre lo stesso.
+
+Per comprendere come possiamo utilizzare un ip elastico andiamo dalla dashboard di EC2 nella sezione network and security cliccando sulla voce elastic ip. Li possiamo richiedere di allocare degli elastic ip in modo da poterli collegare alle nostre istanze e ogni volta che dobbiamo accedere non dobbiamo cambiare l'ip pubblico.
+
+Le operazioni sono : 
++ Allochiamo un nuovo indirizzo
+---
++ scegliamo se vogliamo un ip assegnato da AWS oppure ne possediamo uno 
++ clicchiam su alloca
+---
++ ti verrà assegnato un ip elastico 
+---
++ clicchiamo su action 
++ associamo indirizzo
+---
++ ti chiede se vuoi associare l'indirizzo ad un istanza o ad una rete
++ selezioniamo l'istanze alla quale vogliamo associare l'ip 
++ selezioniamo il nostro ip elastico 
++ clicchiamo su associa
+
+Una volta associato anche se riavviamo la macchina l'ip pubblico della stessa non cambierà. 
+AWS ci da a disposizione solo 5 ip elastici ma se si ha il bisogno di altri possono essere richiesti.
+
+Gli ip elastici hanno un costo quindi se non indispensabili sarebbe meglio non utilizzarli.
+Per dissociare un ip elastico da un istanza basta andare nella sezione istanze selezionare l'istanza che possiede un ip elastico, andare su network e selezionare disassociate elastic ip.
+Una volta fatto andate nella sezione elastic ip e rilasciare l'ip elastico creato.
+
+# EC2 User Data
+Se ogni volta che si avvia una istanza vogliamo che vengano eseguite delle operazioni possiamo utilizzare gli User Data di EC2. Poossiamo far eseguire qualsiasi script all'avvio ricordando che questi verranno eseguiti con i permessi di root.
+
+In funzione del sistema possiamo utilizzare la tipologia di scripting che supporta.
+
+Per poter inserire degli script utenti possiamo andare nella sezione di creazione di un istanza e dopo la selezione della tipologia e del SO, nella scermata di settaggio possiamo andare nella sezione avanzata che ci presentare uno spazio dove inserire uno script per l'esecuzione di codice all'avvio dell'istanza.
+
+![](../immagini/AWSbashstart.png)
+
+Come si può vedere dall'immagini possiamo inserire uno scrip testuale nella casella sottostante o in alternativa possiamo caricare un file.
+
+Una esempio di codice è il segunete :  
+```bash
+#!/bin/bash
+
+# installa httpd 
+yum update -y
+yum install -y httpd.x86_64
+systemctl start httpd.service
+systemctl enable httpd.service 
+echo "Hello Word from $(hostname -f)" > /var/www/html/index.html
+```
+
+Bisogna inserire il primo commento obbligatoriamente altrimenti non si avvierà il comando poiché va specificato il linguaggio.
+
+Tutte le operazioni di seguito vengono avviate come nell'ordine proposto e non fanno altro che avviare un server apache con un file index.html che conterrà la frase Hello Word from (l'indirizzo ip del nat collegato alla nostra istanza).
+
+**NB: il comando definito come $() è una dicitura del linguaggio bash che inserisce i dati dell'host. Per far in modo che questa operazione dia un risultato ad un ipotetico utente che vuole raggiungere il sito bisogna aggiungere la regola nel SG aprendo la porta 80 di tcp per poter ricevere il file index.html altrimenti non si avranno risultati dall'istanza**
+
+
+# Tipologie di istanze 
+Tra le tipologie di istanze troviamo : 
++ On-demand : classica istanza assegnata costo certo anche a valle di variazioni di workload pagamento orario
+    + paghi solo per l'uso effettivo e fatturato a fine mese e la fatturazione è al secondo dopo il primo minuto
+    + non hai obblighi a lungo termine
+    + ricorda di fermarle quando non si ha il bisogno 
+    + Utilizzabile per carichi di lavoro elastici
++ Riservate (minimo un anno):
+    + Riservata : istanza sempre utilizzabile per ad esempio la gestione di un DB in rete dove non sai quando le richieste potrebbero arrivare 
+        + Sconti fino al 75% 
+        + pagamento anticipato o dilazionato 
+        + periodo da 1 a 3 anni
+        + specifica istanza (perfetto per DB)
+    + Riservata convertibile : Istanza riservata ma con la possibilità di ridefinizione 
+        + Possibilità di cambiare l'istanza EC2 durante l'anno
+        + sconto fino al 54%
+    + Riservata programmata : istanza allocabile in un periodo specifico della settimana o del mese
++ Spot : per brevi carichi di lavoro, molto economiche, problemi di disponibilità potrebbero essere eliminate
+    + sconto fino al 90% 
+    + istanze che possono essere perse in qualsiasi momento in funzione del piano di affidabilità e quindi del costo
+    + le più economiche
+    + utilizzate per lavori che non richiedono resilienza 
+        + lavori di background
+        + Data analysis
+        + in generale tutte quelle operazioni che non inficiano sul momento il lavoro del software
+    + Da non utilizzare 
+        + per applicazioni che possano inficiare il lavoro dell'app
++ Istanza dedicata : nessun altro utente sfrutterà l'hw (una macchina completamente dedicata)
+    + hai un EC2 fisico riservato     
+    + Periodo di 3 anni
+    + risolve problematiche di licenza (BYOL) 
++ Host dedicato : hai un server dedicato dove puoi gestire anche l'allocazione delle istanze
+    + visibilità dell'HW sottostate 
+    + risolve problemi di normative su HW
+
+Tutte queste opzioni sono visibili sulla dashboad EC2 nella sezione istanze.
+Tra tutte le opzioni quelle più intreressanti sono le On-Demand, quelle viste nella parte di allocazione di una EC2, e quelle spot.
+
+## Spot 
+Le istanze spot possono essere avviate in fuunzione del :
++ load balancing : lancia istanze della stessa tipologia nella tua AZ utile per Web app
++ Flexible : lancia istanze di qualsiasi tipo e dimensione in diverse AZ utile per elaborazioni Batch distribuite 
++ Big Data : lancia istanze di qualsiasi tipo e dimensione nella stessa AZ utile per elaborazioni distribuite
++ durata : prenotare un istanza per un periodo limitato
+
+Per ogni istanza spot possiamo specificare :
++ AZ
++ rete 
++ chiavi
++ numero di istanze
++ elenco con tutte le istanze scelte
++ impostazioni di ottimizzazione
++ prezzo orario stimato
+
+Possiamo richiedere le istanze spot in due modi : 
++ nella sezione delle istanze spot cliccare su richiedi un istanza spot
+    + in questa sezione possiamo vedere anche il prezzo delle istanze spot durante l'ultimo periodo (3 ore/ 3 mesi) in genere è molto stabile ma in generale rimane il concetto che essendo ritirabili da AWS in qualsiasi momento non è possibile avere la certezza del risultato
+    + Generalmente andiamo in questa sezione solo se vogliamo una serie di istanze
++ nella sezione istanze 
+    + dopo aver selezionato l'istanza che vuoi lanciare c'è un opzione per renderla spot
+    + una volta attivata si possono selezionare le seguneti voci :
+        + costo attuale dell'istanza spot
+        + massimo prezzo pagabile da noi, quando l'istanza supererà il costo orario da noi richiesto AWS riprenderà la risorsa
+        + richiesta di persistenza: se spuntata attiva delle opzioni sul risultato della rimozione della risorsa
+        + ecc
+
+ 
