@@ -357,4 +357,24 @@ Possiamo richiedere le istanze spot in due modi :
         + richiesta di persistenza: se spuntata attiva delle opzioni sul risultato della rimozione della risorsa
         + ecc
 
- 
+# ENI Elastic Network Interface
+É un elemento logico nella VPC ed è una scheda di rete virtuale. Rappresenta l'eth0 vista lanciando il comando `ifconfig -a`. Non è una componente specifica di EC2 ma un elemento ché viene utilizzato anche per altri servizi.
+Gli attributi di una ENI sono :
++ Primary private IPv4 o uno o più ip secondari
++ un ip elastico per ogni ip privato
++ un ip elastico per ogni ip pubblico 
++ uno o più SG
++ MAC address
+
+Gli ENI possono essere creati indipendentemente da un istanza EC2 e possono essere spostati da un istanza ad un'altra. Ogni ENI è legato alla propria AZ. Può essere utilizzato ad esempio per risolvere un fallimento di un istanza in modo da spostare il calcolo su di un'altra in maniera rapida.
+
+Quando allochiamo un istanza EC2 in automatico viene implementata un ENI che è visibile nella sezione description dell'istanza alla voce Network interfaces eth0.
+
+Cliccando sul link possiamo vedere alcuni dettagli dell'ENI come VPC, id, DNS, ecc.
+
+Se andiamo in fondo al menu laterale possiamo vedere tutte le ENI a nostra disposizione nella sezione Network and Security sotto la voce di Network Interface.
+
+Da questa sezione possiamo creare una nuova ENI da poter collegare ad un istanza. La creazione di un ENI è molto semplice basta solo nominarla, indicare in quale AZ deve essere creata, assegnare un ip casuale o uno scelto da noi ed in fine applicare uno o più SG.
+
+Una volta creata basta andare con il tasto destro del mouse sulla nuova ENI e cliccare su attach e selezioanre l'istanza presente sulla stessa AZ. Per rimuoverla basta o cliccare su detach.
+Possaimo modificare o aggiungere ip tramite l'opzione manage ip address, modificare i SG tramite l'opzione Manage security group.
