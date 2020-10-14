@@ -75,3 +75,36 @@ Per la gestione degli accessi al DB :
 
 
 # Aurora
+É il DB relazionale di AWS e non è open souce. Esso è compatibile con MySQL e Postgre in pratica utilizza gli stessi metodi di accesso ed elaborazione. Essendo un DB creato da AWS è ottimizzato per il cloud e ha prestazioni fino a 5 volte superiori ad altri DB integrati in RDS. Permette un espansione della memoria automatica dai 10GB fino a 64TB. Permette una replica in lettura fino a 15 istanze. Il fallimento con Aurora viene risolto istantaneamente permettendo un alta disponibilità. Ha un costo del 20% maggiore rispetto alla controparte RDS ma questo viene compensato con l'efficenza.
+Di base è multi AZ e di default crea 6 copie di cui 2 per la scrittura e 3 per la lettura, implementa un sistema simile al RAID che permette il ripristino di file corrotti. In caso di fallimento del master il ripristino avvine in 30s. Il sistema delle copie è diverso poiché vengono aggiunte automaticamente in funzione del workload e le repliche sono anche cross region. 
+
+Rispetto al RDS, Aurora fornisce un endpoint per le scritture che punta sempre al master ed un endpoint per le letture che funziona da loadbalancing tra le copie di solo lettura.
+
+la sicurezza è molto simile ad RDS poichè usa lo stesso motore.
+
+## Aurora Serverless
+La versione di aurora basata sul concetto di serverless, istanzia automaticamente il database in funzione delle richieste, ottimo per carichi intermittenti ed impredicibili, non bisogna pianificare un quantitativo di dati, si paga al secondo di utilizzo. In pratica abbiamo una serie di proxy che gestiscono come l'autoscaling di EC2 le istanze dei DB di Aurora e ciò permette di avere tante istanze quante ne servono per sopperire al corico richiesto fino anche ad azzerarle nel caso in cui non ci siano richieste.
+
+## Aurora Global Database
+Per implementare il Disaster recovery questa funzionalità permette la creazione di istanze fino a 5 regioni differenti, fino a 16 istanze in solo lettura per la regione secondaria e un tempo di ripristino inferiore al minuto.
+
+## Creazione 
+Come per RDS basta creare un DB e selezionare Aurora nella scelta dei DB, selezionare la compatibilità con MySQL o PostgreSQL, per il resto ha praticamente le stesse impostazioni viste per RDS con alcune opzioni aggiuntive come ad esempio :
++ Provisionato o serverless
++ capacità min e max di ram
++ ecc
+
+
+# ElasticCache
+Viene utilizzato al pari di RDS per la gestione di DB Relazionali. Vengono utilizzati per DB ad alte prestazioni in pratica sono DB in RAM. Vengono utilizzati come layer per i DB cosi da avere un livello molto perfomrmante e uno di solo storage. Questo servizio permette di implementare applicazioni stateless. Come scalabilità sulle scritture utilizza lo **sharding** cioè suddivide gli schemi su più istanze e duplica solo quelle con più alta richiesta, mentre per le letture utilizza le le repliche di solo lettura. Sono multi AZ per gestire i fallimenti. 
+
+In generale viene utilizzato come layer per gli RDS cioè ogni volta che viene richiesta un info passa prima per l'elasticache, nel caso sia prente viene prelevata l'informazione, mentre se non è presente il dato verrà caricato nell EC in modo da essere subito fruibile ad altri client che ne richiedono.
+Un altra applicazione è per il salvataggio di sessioni utenti nelle applicazioni serverless. Un esempio è il caso in cui le nostre app sono devinite tramite container e non salvano nulla di uno specifico utente, quindi per salvare i dati di sessione questi vengono salvati nell'EC cosi se dovesse avvenire una riduzione di container dovuta ad una bassa richiesta e il nostro utente dovesse essere passato su un altra istanza della nostra app, quest'ultima avrebbe comunque i dati di sessione dell'utente.
+
+## Modalità di utilizzo 
+EC ha due modalità di utilizzo e sono : Redis e Memcached.
+Redis è Muti AZ con auto recupero dei fault, supporta le repliche in lettura, sfrutta il metodo AOF per la persistenza dei dati (in pratica salva i dati su di una memoria ridondante) e supporta caratteristiche di backup e ripristino può essere utilizzata o come classica cache o addirittura come layer per DB (come nell'esempio precedente).
+Mentre Memcached sfrutta lo sharding considerando ogni elemento come un nodo, non è persistente, non supporta backup e ripristino ed è sviluppato su architetture milti thread.
+
+## Creazione
+Per avviare un servizio di EC basta ricercarlo tra i servizi. Inizialmente ci viene richiesto se vogliamo redis (ha anche un opzione cluster mod che aumenta la robustezza e la scalabilità) o memcache, oltre alle opzioni standard del tipo nome, porta e ecc, nel caso di redis se aumentiamo il numero di repliche possiamo attivare l'opzione multi AZ. abbiamo delle opzioni per la sicurezza  come : crittografia dei file, controllo degli accessi. La possibilità di importare dei dati da una memoria di tipo S3 (orgomento futuro), backup e manutenzione. Per il suo utilizzo si rimanda alla documentazione.
