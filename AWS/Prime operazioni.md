@@ -193,6 +193,8 @@ Ogni volta che riavviamo l'EC2 cambierà l'ip se si vuole eliminare il vecchio h
 `ssh-keygen -R 54.37.83.190`  
 Con questo comando elimineremo il vecchio host. Questa può essere utile anche nel caso in cui venga cambiata la chiave per lo stesso host e che quindi si creino problemi.
 
+per caricare file possiamo utilizzare il segunete comando : `scp -i Key.pem -r /home/path_cartella/  ec2-user@15.161.101.6:~/path_su_AWS`
+
 # Security Group
 Sono il layer fondamentale di accesso ai servizi EC2. 
 Se andiamo sull'istanza EC2 che ci interessa possiamo cliccare sul primo link dopo la dicitura Security group nella descrizione per essere reindirizzati alla pagina security group dell'istanza. 
