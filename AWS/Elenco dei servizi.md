@@ -23,3 +23,4 @@ Affini:
 + VPC Endpoints : sono i punti di collegamento tra due VPC o più in generale i punti di collegamento dei servizi AWS esterni alla VPC
 + StSVPN : (Site to Site VPN) permette la comunicazione tra AWS e servizzi di terze parti (generalemnte server aziendali)
 + DX : (Direct Connection) servizio per la messa in opera di una rete fisica di collegamento tra i datacenter e i server aziendali
++ AWS CLI : gestore di AWS da riga di comando
