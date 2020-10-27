@@ -198,6 +198,11 @@ Comandi simili sono :
 + `sudo halt`  
 + `sudo poweroff`
 
+## echo 
+Scrive i suoi parametri su di uno standard output, in generale sul terminale.  
+`echo questo è un testo ` stamperà sul termiale il suo argomento  
+`echo questo è un testo > testo.txt` stamperà il suo argomento nel file testo.txt
+
 # Gestione utenti
 In linux l'utente che ha maggiori diritti su tutto il sistema è l'utente **root**, esso ha diritti su tutto nel sistema dai file alle applicazioni.
 
