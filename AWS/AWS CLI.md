@@ -300,5 +300,24 @@ Per poter avviare una richiesta per uno specifico profilo basta utilizzare la di
 `aws s3 ls --profile nome-profilo`  
 Così facendo si avvierà la procedura richiesta per il profilo indicato. In questo modo possiamo interagire con AWS utilizzando vari profili slegando le azioni da un unico account o da un unico utente.
 
+# Multi factor autentication con CLI e SDK
+Per poter utilizzare questo tipo di autenticazione bisogna creare una sessione temporanea utilizzando il servizio STS con l'API **GetSessionToken**, questa API viene richiamata ogni volta che si richiede l'accesso ad un servizio.
 
+La richiesta si concretizza con il segunete comando :  
+`aws sts get-session-token --serial-number  arn-of-the-mfa-device --token-code code-from-device-mfa --duration-second 3600`  
 
+La risposta a questa richiesta si concretizza con il seguente json :  
+```json
+{
+"Credentials" : {
+    "SecretAccessKey" : "secret-access-key",
+    "SessionToken" : "token-di-sessione-temporaneo",
+    "Expiration" : "data-della-validità",
+    "AccessKeyId" : "identificativo-della-chiave"
+} 
+}
+```
+
+Per poter quindi applicare questa politica bisogna avere l'ARN (Amazon Resource Name) nel dispositivo MFA (vedi prime operazioni).
+
+Questo access key permete di dare dei permessi ad esempio a delle app che ogni volta che devono lavorare con i servizi AWS devono utilizzare un sistema di autenticazione.
