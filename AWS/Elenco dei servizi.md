@@ -6,10 +6,13 @@ Servizi:
 + VPC : (Virtual Privete Cloud) servizio per la gestione di rete regionale 
 + ElastiCache : memorie veloci per la cache delle applicazioni e layer per servizi lenti
 + Route 53 : DNS dai domini ai servizi 
-+ SageMaker : Modelli di IA preimpostati da AWS 
++ SageMaker : Modelli di IA preimpostati da AWS e servizi di scripting di algoritmi
 + S3 : Servizio di storage basato su oggetti
 + CloudTrail : permette di gestire gli accessi ai servizi delle API
-+ 
++ Athena : interprete di query per S3 basato su SQL e serverless
++ ECS : (Elastic Container Service) servizio di orchestrazione di container
++ ECR : (Elastic Container Register) gestore delle immagini che supporta dalla developmet fino alla distribution
++ Fargate : Versione serverless di ECS
 
 Affini:   
 + ELB : (Elastic Load Balancer) servizio di gestione del carico per i servizi
