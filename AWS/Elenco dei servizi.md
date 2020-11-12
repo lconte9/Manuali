@@ -13,6 +13,7 @@ Servizi:
 + ECS : (Elastic Container Service) servizio di orchestrazione di container
 + ECR : (Elastic Container Register) gestore delle immagini che supporta dalla developmet fino alla distribution
 + Fargate : Versione serverless di ECS
++ CloudFormation : Implementa architetture tramite la trauzione di file YAML o JSON
 
 Affini:   
 + ELB : (Elastic Load Balancer) servizio di gestione del carico per i servizi
