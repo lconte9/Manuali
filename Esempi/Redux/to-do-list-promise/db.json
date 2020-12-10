@@ -1,0 +1,24 @@
+{
+  "lista": [
+    {
+      "lavoro": "task 3",
+      "completato": false,
+      "id": 3
+    },
+    {
+      "lavoro": "prova",
+      "completato": false,
+      "id": 4
+    },
+    {
+      "lavoro": "tast",
+      "completato": false,
+      "id": 5
+    },
+    {
+      "lavoro": "test",
+      "completato": false,
+      "id": 6
+    }
+  ]
+}

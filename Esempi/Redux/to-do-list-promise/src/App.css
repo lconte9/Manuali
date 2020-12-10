@@ -1,0 +1,90 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 20vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+ul{
+    padding: 0;
+    list-style-type: none;
+    min-height: 300px;
+}
+
+li{
+  margin-left: 30px;
+  text-align: left;
+  border-bottom: 1px solid white;
+  padding: 10px 0px;
+  cursor: pointer;
+  background-color: grey;
+  color: white;
+  min-width: 300px;
+}
+
+li span.noncompletato::before{
+  content: '\025A1';
+  font-size: 30px;
+  padding: 10px;
+}
+
+li span.completato::before{
+  content: '\02713';
+  font-size: 30px;
+  padding: 10px;
+  color: green;
+}
+
+li.completato{
+  text-decoration: line-through;
+}
+
+li:hover span.cross:after{
+  content: '\02A2F';
+  color : brown;
+  font-size: 30px;
+  text-align : left;
+  float: right;
+  margin-right: 20px;
+}
+
+.container{
+  display: flex;
+  flex-flow: column;
+  border: 0px solid black;
+  align-items: center;
+  margin-top: 10px;
+}
