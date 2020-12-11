@@ -1,3 +1,7 @@
+# Prima di avviare lo script bisogna lanciare il json-server tramite il comando: json-server --watch db.json --port 3001 --no-cors
+
+
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
