@@ -320,7 +320,7 @@ Per semplificare l'utilizzo di Redux con React esiste questa libreria. Per poter
 
 Un primo concetto con l'aggiunta di questa libreria è il componente presentazionale e i componenti container.
 
-## Componenti presentazionali e componenti container
+## Componenti presentazionali 
 
 Quando andiamo a vedere la documentazione di react redux ci vengno mostrati, come prima parte, i componenti presentazionali ed i container. In pratica tramite questa libreria possiamo pensare alla parte grafica senza doverci preoccupare di quelli che sono i dati ad essa collegati e le funzioni che dovremmo definire in essa per eseguire operazioni quali promise.
 
@@ -332,18 +332,334 @@ Quindi iniziamo a definire delle cartelle nel progetto quali : Views e Container
 Nella cartella Views andiamo a creare il componente per la lista con il segunete codice :
 ```js
 import React from 'react';
+import Elemento from './elemento'
 
-
-export default function lista () {
+export default function lista ({lista}) {
 
     return (
         <React.Fragment>
             <ul>
                 {
-                    this.state.lista.map( (elemento,i) => <li key={i}>{elemento} <button onClick={ this.rimuoviElemento.bind(null,i)}>-</button></li>)
+                    this.state.lista.map( (elemento,i) => {<Elemento key={i} elemento = {elemento} />})
                 }
             </ul>
         </React.Fragment>
     )
 }
+```
+Ed il componente elemento con il segunete codice :
+```js
+import React from 'react';
+
+export default function elemento({elemento}) {
+
+    return (
+        <li >{elemento} <button onClick={ this.rimuoviElemento.bind(null,i)}>-</button></li>
+        )
+}
+    
+```
+
+Un ulteriore aggiunta nei componenti Views è quella dell'input con il codice qui di seguito : 
+```js
+import React from 'react':
+
+export default function input({aggiungiElemento}){
+    
+    let listaInput;
+
+    return(
+        <React.Fragment>
+            {/* il ref rappresenta un modo diverso per definire il riferimento*/}
+            <input ref = {node => {riferimentoTask = node}} />
+            <button onClick = { aggiungiElementoLista}> add </button>
+        </React.Fragment>
+    )
+}
+```
+
+Ora definiamo un componente che inglobi la nostra app, chiamiamolo MyApp : 
+```js
+import React from 'react';
+//import componenti Views
+import Input from './Views/input';
+import Lista from './Views/lista';
+
+export default function myApp(){
+    
+    return(
+        <div>
+            <Input />
+            <Lista />
+        </div>
+    )
+}
+
+``` 
+
+Dopo aver effettuato la scomposizione degli componenti di visualizzazione andiamo a strutturare i reducer.
+
+## Reducer
+Nella prima parte abbiamo inserito la funzione storeReducer nell'App mentre normalmente si utilizza una cartella apposita dove salviamo tutti i nostri reducer poiché in progetti più complessi potremmo avere bisogno di più funzioni che modificano il nostro stato in funzione di quanti stati può avere la nostra applicazione.
+
+Quindi creiamo la nostra cartella Reducer e inseriamo un file con il seguente codice (come standard possiamo utilizzare per il reducer principale il nome index.js) : 
+```js
+export default function storeReducer( state = {}, action) {
+    switch(action.type) {
+        case "ADD_ELEMENTO" : 
+            return {
+                    lista  : [
+                        action.payload,
+                        ...state.lista
+                    ]
+                }
+
+        case "REMOVE_ELEMENTO" :
+            return {
+                lista : [
+                    ...state.lista.slice(0,action.payload)
+                    ...state.lista.slice(action.payload + 1)
+                ]
+            }
+
+        default : 
+            return {...state}
+    }
+    
+}
+```
+
+
+
+## Action 
+Effettueremo un uteriore modifica andando a copiare le funzioni aggiungiElemento e rimuoviElemento in una cartella Action.
+Riscriveremo il codice del file come di seguito :
+```js
+ 
+ export const aggiungiElementoLista = ({elemento}) => {
+
+        
+        
+        return({
+            type: "ADD_ELEMENTO"
+            payload : elemento
+        });
+    }
+
+export const rimuoviElemento = (i) => {
+    return({
+        type : "REMOVE_ELEMENTO",
+        payload : i
+    })
+}
+```
+
+Come possiamo notare abbiamo eliminato la funzione dello store dispatch. Questa modifica viene effettuata poiché utilizzeremo la libreria react-redux che effettuerà in automatico il binding con i componenti react è che invierà in automatico le dispatch al reducer tramite la funzione connect(). A valle di questa operazione possiamo anche eliminare il contenuto in App di componentDidMount poiché sarà sempre connect che effettuerà l'aggiornamento dello stato del componente.
+
+Quindi le nostre action in questo modo si riducono al solo ricevere un parametro e inviare un azione.
+
+A valle di tutte le modifiche dovremmo avere una situazione del genere come file :
++ src
+    + Action
+        + mainAction.js
+    + Container
+    + Reducer
+        + mainReducer.js
+    + Views 
+        + input.js
+        + lista.js
+        + elemento.js
+        + myApp.js
++ App.js
++ resto dei file di react
+
+## Provider
+
+A questo punto per passare lo store a tutti i componenti che ne hanno bisogno utilizzeremo un provider e cioè un componente wrapper che inietterà lo stato all'interno della nostra app e che darà i dati a tutti i componenti che ne richiedono senza dover passare lo store da padre in figlio.
+
+Quindi per effettuare questa operazione andiamo in App e modifichiamo il codice come segue :
+```js
+import React from 'react';
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
+
+import MyApp from './Views/myApp';
+let listaSpesa = [
+    "latte",
+    "uova",
+    "pane"
+]
+
+function storeReducer( state = {}, action) {
+    return {...state};
+}
+
+const store = createStore( storeReducer, {lista :[...listaSpesa]} )
+
+class App extends React.Component {
+    constructor (){
+        super()
+    }
+    
+    
+    render(){
+        return (
+            <div>
+                <Provider store = {store}>
+                   <MyApp />
+                </Provider>
+            </div>
+        )
+    }
+}
+```
+
+## Container
+I conteniner sono delle classi che prendono le Views e iniettano la parte di dati che vogliamo dare allo specifico componente.
+Come esempio scriviamo il container per il componente lista :
+```js
+import {connect} from 'react-redux';
+import Lista from '../Views/lista'
+
+//funzione che mappa lo stato con le proprietà del componente riceve in ingresso lo stato proveniente dallo store mentre il secondo sono le props del componente (se il passaggio è solo dallo store al componente allora basta solo state altrimenti dobbiamo inserire anche il secondo parametro)
+const mapStateToProps = (state, ownProps) => {
+
+    return (
+        //il primo elemento rappresenta la variabile che si aspetta il componente view, mentre il secondo è il contenuto dello store interessato 
+        lista : [...state.lista]
+    )
+}
+
+//connect prende in ingresso la funzione che mappa lo stato (il nome non è importante ma per standard si usa questa dicitura) mentre la seconda mappa le azioni definite nelle action. connect restituisce una funzione e quindi nel secondo parametro dobbiamo inserire la view per la quale abbiamo mappato il container
+const myList = connect(mapStateToProps)(Lista)
+
+export default myList
+```
+
+Una volta che abbiamo creato il container dobbiamo utilizzare quest'ultimo nella definizione di MyApp al posto del componente view. 
+
+```js
+import React from 'react';
+//import componenti Views
+import Input from './Views/input';
+//import Lista from './Views/lista';
+import MyLista from '../Container/myLista'
+export default function myApp(){
+    
+    return(
+        <div>
+            <Input />
+            <MyLista />
+        </div>
+    )
+}
+
+```
+
+Il prossimo passaggio è creare un container per Input, per semplicità e per dimostrazione è possibile creare il container anche all'interno dell'elemento view ma per prassi è sempre bene separare la parte visuale dalla parte logica anche se il componente è piccolo :
+```js
+import {connect} from 'react-redux';
+
+import React from 'react';
+
+import {aggiungiElementoLista} from '../Action/mainAction'
+
+function input(){
+    
+    let listaInput;
+
+    return(
+        <React.Fragment>
+            {/* il ref rappresenta un modo diverso per definire il riferimento*/}
+            <input ref = {node => {riferimentoTask = node}} />
+            <button onClick = { aggiungiElementoLista}> add </button>
+        </React.Fragment>
+    )
+}
+
+const myInput = connect()(input)
+
+export default myInput
+```
+
+In realtà il componente cosi definito è già collegato allo store o meglio può effettuale l'operazione di dispatch poiche in realtà negli argomenti della nostra funzione abbiamo di default la funzione dispatch :
+```js
+
+function input({dispatch}){
+    
+    let listaInput;
+
+    return(
+        <React.Fragment>
+            {/* il ref rappresenta un modo diverso per definire il riferimento*/}
+            <input ref = {node => {listaInput = node}} />
+            {/*inseriamo la funzione anonima o il bind per evitare che qunado viene creato il componente la funzione non verrà avviata ma solo al click del mouse*/}
+            <button onClick = { () => dispatch( aggiungiElementoLista(listaInput.value) )}> add </button>
+        </React.Fragment>
+    )
+}
+
+```
+
+La funzione definita in questo modo è perfettamente funzionante ma il metodo ottimale è il segunete, partendo dal componente view iniziale :
+```js
+import React from 'react':
+
+export default function input({aggiungiElemento}){
+    
+    let listaInput;
+
+    return(
+        <React.Fragment>
+            {/* il ref rappresenta un modo diverso per definire il riferimento*/}
+            <input ref = {node => {listaInput = node}} />
+            <button onClick = { () =>{ 
+                aggiungiElemento( listaInput.value )
+                {/*per azzerare il valore nell'input*/}
+                listaInput.value= ""
+            }}
+            
+            > add </button>
+        </React.Fragment>
+    )
+}
+```
+Abbiamo il segunete container : 
+```js
+import {connect} from 'react-redux';
+import {aggiungiElementoLista} from '../Action/mainAction';
+import Input from '../Views/input';
+
+//le ownProps vengono utilizzate quando consideraimo nella view le props ma questo rappresenta il vecchio metodo cioé il passaggio di variabili da padre a figlio quindi nella stragrande maggioranza dei casi difficilmente le utilizzeremo
+const mapDispatchToProps = (dispatch, ownProps) => {
+    return{
+        //aggiungiElemento è la funzione definita nella view mentre aggiungiElementoLista è la funzione definita nelle action che abbiamo richiamato negli import
+        aggiungiElemento : (elemento) => {
+            dispatch( aggiungiElementoLista(elemento) )
+        }
+    }
+
+}
+
+
+/*
+In questo caso che stiamo facendo l'inserimento di un nuovo valore non abbiamo bisogno di passare lo store quindi inseriremo null come primo parametro, il secondo parametro non è altro che il mapping tra la funzione che possiede la view e la action corrispondente
+*/
+export default connect(null,mapDispatchToProps )(Input)
+```
+
+in realtà esiste anche un metodo di mapping più breve :
+```js
+import {connect} from 'react-redux';
+import {aggiungiElementoLista} from '../Action/mainAction';
+import Input from '../Views/input';
+
+//si fa corrispondere alla funzione dichiarata nella view quella della action
+export default connect(null,{aggiungiElemento : aggiungiElementoLista} )(Input)
+
+
+/*
+  Un ulteriore semplificazione si ha quando la funzione definita nella view ha lo stesso nome della action in quel caso basta solo scrivere il nome della action nell'oggetto 
+*/
+
 ```

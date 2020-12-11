@@ -1,4 +1,4 @@
-# Prima di avviare lo script bisogna lanciare il json-server tramite il comando: json-server --watch db.json --port 3001 --no-cors
+# Prima di avviare lo script bisogna lanciare il json-server tramite il comando: json-server --watch db.json --port 3001 --no-cors ; e ricordate di avviare il comando npm install per la generazione delle dipendenze
 
 
 
