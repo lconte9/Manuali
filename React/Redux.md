@@ -663,3 +663,33 @@ export default connect(null,{aggiungiElemento : aggiungiElementoLista} )(Input)
 */
 
 ```
+
+## Middleware
+Andando a vedere la documentazione di redux possiamo notare che createStore ha 3 parametri in ingresso che sono : il reducer, lo stato iniziale e l'Enhancer .
+In pratica il terzo parametro permette di inserire dei componenti ulteriori alla nostra struttara definiti middleware. Attraverso queste applicazioni possiamo andare ad interagire con le varie fasi dell'interazione di redux (prima e dopo la dispatch) con il frontend.
+Una delle funzionalità dei middleware è quella di poter inserire del contunuto alle nostre funzioni di comunicazione con il backend o di fare uno screening delle azioni che si sono effettuate cosi da poter individuare eventuali bug.
+
+Per poter applicare un middleware dobbiamo utilizzare la funzione applyMiddleware che ingloba l'elenco di middleware che vogliamo applicare e gli fornisce i metodi getState e dispatch. 
+
+per poter applicare un middleware quindi basta scrivere il segunete codice nella creazione dello store :
+```js
+const store = createStore(storeReducer, {...prova}, applyMiddleware(logger, promise));
+```
+
+### Logger
+Logger è un middleware scritto dalla comunity installabile tramite il comando :  
+`npm install redux-logger`
+
+Il logger non è altro che un componente che ti mostra in console le azioni che vengono eseguite sullo store.
+
+Per poterlo utilizzare, una volta installato, basta importarlo trmaite il comando :  
+```js
+import logger from 'redux-logger'
+```
+
+un esempio è il segunete :  
+![](../immagini/redux-logger.png)  
+
+Come potete vedere da delle informazioni sull'action eseguita sullo stato precedente e sullo stato attuale.
+
+### 

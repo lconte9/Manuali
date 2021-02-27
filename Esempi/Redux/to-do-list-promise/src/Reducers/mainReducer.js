@@ -23,7 +23,7 @@ import {combineReducers} from 'redux'
  *      errore
  * })
  * 
- * in questo modo verrà implementato un link automarico tra il reducer e la parte dello stato a lui dedicata
+ * in questo modo verrà implementato un link automatico tra il reducer e la parte dello stato a lui dedicata
  */
 
 export default combineReducers({
