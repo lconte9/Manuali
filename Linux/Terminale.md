@@ -358,7 +358,8 @@ i comandi della modalità comandi sono :
 + p : screen precedente
 + d : uscire dalla modalità screen e torna al terminale iniziale
 
-
+per killare una sessione di screen il comando è il seguente :
+`screen -X -S PID quit`
 
  
 
