@@ -344,9 +344,9 @@ serve per generare e gestire delle sessioni di terminale permanente.
 per avviare il comando basta lanciarlo `screen`.
 
 una volta lanciato ci sono due modalità per finestra (un po come vim) e sono :
-+ modalità comandi
++ modalità comandi  
     permette di creare nuovi screen con il comando Ctrl+c o di spostarsi tra screens con il comando Ctrl+a
-+ modalità terminale
++ modalità terminale  
     permette di lanciare i comandi da terminale
     
 Una volta chiusa la sessione è possibile riaprire gli screen tramite il comando `screen -dr` che permetterà di avviare tutti gli screen non ancora chiusi o in alternativa con il comando `screen -r` vedere tutti gli screen attivi con il loro pid e con `screen -r PID` collegarsi ad uno specifico pid 
