@@ -2,28 +2,34 @@
 \babel@toc {italian}{}
 \babel@toc {italian}{}
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{Introduzione}{iii}%
+\contentsline {chapter}{Introduzione}{iii}{}%
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\numberline {1}Primi passi con Git}{1}%
+\contentsline {chapter}{\numberline {1}Primi passi con Git}{1}{}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {1.1}Stati del file}{1}%
+\contentsline {section}{\numberline {1.1}Stati del file}{1}{}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {1.2}Istallazione}{2}%
+\contentsline {section}{\numberline {1.2}Istallazione}{2}{}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {1.3}Impostare l'ambiente}{2}%
+\contentsline {section}{\numberline {1.3}Impostare l'ambiente}{2}{}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {1.4}Definire l'identità}{2}%
+\contentsline {section}{\numberline {1.4}Definire l'identità}{2}{}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {1.5}Definire l'editor}{3}%
+\contentsline {section}{\numberline {1.5}Definire l'editor}{3}{}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {1.6}Verificare le impostazioni}{3}%
+\contentsline {section}{\numberline {1.6}Verificare le impostazioni}{3}{}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {1.7}Comando help}{3}%
+\contentsline {section}{\numberline {1.7}Comando help}{3}{}%
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\numberline {2}Le basi di Git}{5}%
+\contentsline {chapter}{\numberline {2}Le basi di Git}{5}{}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {2.1}Inizializzare un repository}{5}%
+\contentsline {section}{\numberline {2.1}Inizializzare un repository}{5}{}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {2.1.1}Inizializzare un repository da un progetto già esistente }{5}%
+\contentsline {subsection}{\numberline {2.1.1}Inizializzare un repository da un progetto già esistente }{5}{}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {2.1.2}Clonare un repository già esistente}{6}%
+\contentsline {subsection}{\numberline {2.1.2}Clonare un repository già esistente}{6}{}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {2.1.3}Registrare i cambiamenti nei repository}{7}{}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{Controlare lo stato di un file}{7}{}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{Tracciamento di nuovi file}{8}{}%

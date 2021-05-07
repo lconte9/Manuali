@@ -31,8 +31,45 @@ Scaricando tutti gli ultimi file e impostando una cartella \textbf{.git}. I file
 \begin{lstlisting}
 	git clone [URL] nome_cartella_progetto
 \end{lstlisting} 
-Il comando è lo stesso del precedente con l'aggiunta di un opzione. si possono utilizzare molti protocolli di comunicazione come ad esempio HTTPS, SSH, git://, ecc. Più in generale sono tutti formati da : \textbf{\textit{user@server:path/to/repo.git}}.
+Il comando è lo stesso del precedente con l'aggiunta di un opzione. si possono utilizzare molti protocolli di comunicazione come ad esempio HTTPS, SSH, git://, ecc. Più in generale sono tutti formati da :  \textbf{\textit{user@server:path/to/repo.git}}.
 Quando si scarica un progetto e si vogliono apportare alcune modifiche, i file che sono contenuti sono già tracciati, quindi git rivela le modifiche che hai apportato mentre se crei altri file questi sono nello stato non tracciato, quindi Git non vedrà se sono stati modificati o meno.
-\begin{figure}
-	
+
+
+\subsection{Registrare i cambiamenti nei repository}
+Dopo aver effettuato il clone avrai una copia dell'intero repository in locale, a questo punto puoi iniziare a modificare i file ed effettuare delle \textbf{commit} per tenere aggiornate tutte le modifiche effettuate. In generale i file del tuo progetto possono trovarsi in due stati: tracciati e non tracciati.
+I file tracciati sono file della quale git ne è al corrente e questi possono essere in tre condizioni : non modificati, modificati e in staged.
+I file non tracciati sono tutto il resto, in pratica tutti i file che sono nella directory di progetto ma che non erano nell'ultima snapshot e che non si trovano nell'area di staging. Quando si effettua un clone tutti i file sono tacciati e non modificati. Quando modifichi i file vengono visti da git come modifica e quindi bisogna effettuare una commit per aggiornare le modifiche.
+\begin{figure}[ht]
+					\centering
+					\includegraphics[width=1 \textwidth]{immagini/stato1.png}
+					\subitem \caption{stati di un file in git}
+					\label{json:imm}
 \end{figure}
+Questa immagine rappresenta gli stati nella quale si può trovare un file in git.
+
+\subsubsection{Controlare lo stato di un file}
+Lo strumento principale per conprendere lo stato dei file è il comando :
+\begin{lstlisting}
+	git status
+\end{lstlisting} 
+un tipico status è il segunete :
+\begin{figure}[H]
+					\centering
+					\includegraphics[width=1 \textwidth]{immagini/status.png}
+					\subitem \caption{esempio di git status per la modifica di questo manuale}
+					\label{json:imm}
+\end{figure}
+Questo output sta ad indicare che ci sono file che sono stati modificati nello specifico il file cap2.tex, quindi tracciati e poi possiamo notare che ci sono dei file che non sono stati tracciati, che quindi, sono stati creati prima dell'ultimo commit. Un ultima informazione che puoi trarre è il ramo di sviluppo nella quale ti trovi attualmente.
+I file non tracciati non verranno aggiunti alle snapshot finche non vengono esplicitamente aggiunti 
+\subsubsection{Tracciamento di nuovi file}
+Per esplicitare che si vogliono tener traccia di file attualmente non tracciati possimo farlo con il comando : 
+\begin{lstlisting}
+	git add <nome_file>
+\end{lstlisting}
+In alternativa possiamo utilizzare il comando :
+\begin{lstlisting}
+	git add .
+\end{lstlisting}
+per integrare tutti i file non tracciati all'interno del prossimo commit. Il comando \textbf{git add} accetta percorsi di file o directory, nel caso della directory aggiungerà tutti i file in essa contenuti.
+ 
+
