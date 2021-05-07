@@ -339,4 +339,27 @@ http://guide.debianizzati.org/index.php/Guida_ai_comandi_da_terminale_-_Gestione
 
 http://guide.debianizzati.org/index.php/Guida_ai_comandi_da_terminale_-_Operazioni_con_programmi_non_presenti_nei_repository
 
-# 
+# screen
+serve per generare e gestire delle sessioni di terminale permanente.
+per avviare il comando basta lanciarlo `screen`.
+
+una volta lanciato ci sono due modalità per finestra (un po come vim) e sono :
++ modalità comandi  
+    permette di creare nuovi screen con il comando Ctrl+c o di spostarsi tra screens con il comando Ctrl+a
++ modalità terminale  
+    permette di lanciare i comandi da terminale
+    
+Una volta chiusa la sessione è possibile riaprire gli screen tramite il comando `screen -dr` che permetterà di avviare tutti gli screen non ancora chiusi o in alternativa con il comando `screen -r` vedere tutti gli screen attivi con il loro pid e con `screen -r PID` collegarsi ad uno specifico pid 
+
+i comandi della modalità comandi sono :
++ Ctrl + a : cambio modalità e premuto due volte cambio screen 
++ c : nuovo screen 
++ n : screen successivo 
++ p : screen precedente
++ d : uscire dalla modalità screen e torna al terminale iniziale
+
+per killare una sessione di screen il comando è il seguente :
+`screen -X -S PID quit`
+
+ 
+
