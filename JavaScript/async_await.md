@@ -70,4 +70,5 @@ async function getBlogAndPhoto(userId) {
        console.log("Si è verificato un errore!")
     }
  }
+
 ```
