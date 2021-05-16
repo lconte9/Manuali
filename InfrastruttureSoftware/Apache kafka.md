@@ -84,6 +84,6 @@ Per eliminare i dati di ambiente che sono stati generati durante l'elaborazione,
 
 
 # Ecosistema
-Attraverso **kafka Connect** è possibile scrivere o di ricevere dati da sistemi esterni. Spesso i pacchetti per l'interconnesisone sono proprietari delle piattaforme e supportati separatamente da kafka.
+Attraverso **kafka Connect** è possibile scrivere o ricevere dati da sistemi esterni. Spesso i pacchetti per l'interconnesisone sono proprietari delle piattaforme e supportati separatamente da kafka.
 Un elenco dei pacchetti per varie applicazioni si possono trovare nella seguente sezione [Ecosistema kafka](https://cwiki.apache.org/confluence/display/KAFKA/Ecosystem)
 
