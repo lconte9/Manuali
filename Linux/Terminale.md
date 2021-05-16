@@ -160,6 +160,8 @@ Permette di effettuare download da internet, la sintassi :
 legge anche espressioni regolari nell'url 
 
 le opzioni sono :  (molte le aggiungo quando le uso)
++ -O : download file con lo stesso nome con la quale è salvato sul server
+
 
 ## free
 Dati di uso della ram e della swap, la sintassi :  
