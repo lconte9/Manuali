@@ -7,3 +7,11 @@ Il comando per l'installazione è il seguente:
 `npm install --save leaflet react-leaflet`  
 
 bisonga anche importare la libreria css di leaflet
+`import 'leaflet/dist/leaflet.css' ; `
+Non che aggiungere nel css del componente la seguente classe :
+```css
+.leaflet-container {
+    width: 100wh; 
+    height: 50vh;
+  }
+```
