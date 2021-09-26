@@ -34,3 +34,15 @@ verranno mostrati i file per l'attivazione delle versioni di python installati
 PS: per la versione installata di default usiamo solo la path /usr/bin/python_version_based
 + Per impostare la versione di python che si vuole usare basta lanciare il comando :  
 `sudo update-alternatives --config python3` e selezionaimo la versione che vogliamo utilizzare tramite il valore posto alla fine del comando precedente
+
+
+**Con questa procedura possiamo solo scegliere la versione di python che possiamo utilizzare, mentre per quanto riguarda i processi del tipo pip e pipenv bisogna richiamare per forza la versione specifica per installazione**
+
+per ovviare alla problematica di pip si possono utilizzare gli alias:  
++ se non esiste creare il file ~/.bash_aliases con il seguente comando :  
+`nano ~/.bash_aliases`
++ ricercare la path della versione di pip che si vuole usare, nel caso dell'istallazione alternativa(3.8) la path sarà questa : `/usr/local/bin/pip3.8`
+
+ma ciò non basta, in genere ci sono dei problemi relativi alla versione di pip che non viene risolta solo con gli alias poiché viene effettuato un controllo tra la versione di pip che vuole intallare un programma e se le versioni di pip per verisone di python non sono le stesse, tutte le oprazioni di pip danno errore
+
+In questo modo abbiamo che quando si cambia verisone di python cambia anche la versione di pip per installazione
