@@ -1,5 +1,5 @@
 # Intro
-D3js è una libreria JS che permette di graficare delle informazioni più o meno complesse, si basa su SVG, Canvas e HTML. Questa libreria sfrutta i tag <svg>, i selettori css di livello 1 e le transition quindi se dovete sviluppare un applicazione per un browser datato non potete utilizzare questa libreria.
+D3js è una libreria JS che permette di graficare delle informazioni più o meno complesse, si basa su SVG, Canvas e HTML. Questa libreria sfrutta i tag svg i selettori css di livello 1 e le transition quindi se dovete sviluppare un applicazione per un browser datato non potete utilizzare questa libreria.
 
 D3js non ha una serie di grafici configurabili ma tutta una serie di piccoli elementi componibili che 
 
@@ -215,6 +215,30 @@ function getData() {
 
 **Ora dobbiamo aggiungere una funzione che permette l'aggiornamento del grafico che nel nostro caso è la seguente :**  
 ```js
+
+ updateChart = ( )=>{
+     //GENERIAMO UN RIFERIMENTO AL COMPONENTE CHE D3 UTILIZZERÀ COME PLACEHOLDER PER IL CARICAMENTO DEL GRAFICO
+     const svgElement = d3.select(ref.current)
+     //SELEZIONA TUTTI GLI ELEMENTI CIRCLE ESISSTENTI SUL DOM
+     svgElement.selectAll("circle")
+     //PRENDI I DATI (NEL NOSTRO CASO LA FUNZIONE CHE LI GENERA RANDOMICAMENTE)
+      .data(getData(), d => d)
+      //LA FUNZIONE JOIN HA COME OBBIETTIVO RIUNURE GENERARE IL COMPONENTE E NEL CASO CE NE SIA UNO PREESISTENTE DI AGGIORNARLO
+      .join(
+          //GENERAZIONE DI UN NUOVO COMPONENTE
+        enter => (
+            //AGGIUNGIAMO UN CERCHIO PER ONGNI ELEMENTO DATA
+          enter.append("circle")
+          //AGGIUNGIAMO LE CARATTERISTICHE DELL'ELEMENTO CIRCLE TRIAMTE IL METODO ATTR
+              .attr("cx", d => d * 15 + 10)
+              .attr("cy", 10)
+              .attr("r", 0)
+              .attr("fill", "cornflowerblue")
+              
+       
+      )
+
+ }
 ```
 
 La parte di codice più importante che lega D3 e React è la seguente :  

@@ -11,16 +11,31 @@ Un semplice eveto è il seguente :
 + Chiave dell'evento: "Alice"
 + Valore dell'evento: "Ha effettuato un pagamento di 200 dollari a Bob".
 + Timestamp dell'evento: "25 giugno 2020 alle 14:06"
++ Header (opzionale) : server per dare delle indicazioni al consumer per la loro elaborazione, rappresentano dei metadati 
 
 I topic di kafka sono suddivisi in due tipologie e sono : **normal topic** e **compacted topic**, la prima definisce un flusso dati che deve essere elaborato e dopo un certo periodo di tempo deve essere eliminato mentre il secondo vene utilizzato per quei flussi che devono essere salvati per lunghi periodi. 
 
 ![](../immagini/StrutturaKafka.png)
 
+La truttura dei topic più nel dettaglio è la seguente :  
+![](../immagini/apache-kafka-architecture-fundamentals-explained-13-638.jpg)
+
+Il broker (possiamo considerarlo come componente fisico che memorizza l'informazione) i topic sono suddivisi in più partizioni che possono esssre replicate su più broker nel cluster (rappresenta il componente logico ).
+Ogni partizione può essere gestita in un modo differente e cioè possiamo utilizzare le partizioni per per dividere i vari messaggi oppure possiamo inserire gli stessi messaggi in più partizioni generando delle ridondanze. 
+Mentre il segmento rappresenta il file messaggio vero e proproprio salvato su di un file sulla memoria del broker.
+
+nella struturazione dei broker abbiamo che ci saranno dei broker leader (dove i producer caricheranno i dati) e dei broker follower (broker che prenderanno i dati dal broker leader)
+
+**Da rivedere**  
+in un cluster possiamo avere più broker, ogniuno di essi può avere una o più partizioni in comune e che quindi rappresentano una replica.  Questa caratteristica ne permette la replicabilità e la scalabilità ad esempio con l'utilizzo di container.
+
+**fine da rivedere**
+
 Kafka si basa su 5 interfacce chiave e sono :
 + **Kafka Producer**: interfaccia per l'invio di dati al sistema da parte dei produttori
 + **Kafka Consumer**: interfacci per la ricezione dei topic elabotati da kafka
 + **kafka Stream**: interfaccia di comunicazione per i programmi che devono elaborare lo stream 
-+ **kafka Connect**: interfacci per impostare le connessioni tra producer e consumer attraverso i topic esistenti
++ **kafka Connect**: interfaccia per collegare sistemi esistenti (esegue il funzionamento di producer e consumer tra sistemi che implementano gia kafka di default es influxdb, ecc)
 + **kafka AdminClient**: interfaccia di amministrazione e controllo dei cluster kafka
 
 # Utilizzo di base
@@ -37,6 +52,7 @@ Per lanciare kafka in ambiente locale bisogna che ci sia il pacchetto java 8+ su
 `bin/zookeeper-server-start.sh config/zookeeper.properties`  
 
 Questo pacchetto di apache foundation serve per gestire le informazioin di configurazione, la gestione dei nomi delle risorse, la sincronizzazione di servizi distribuiti e la fornitura di servizi a gruppi di container. Applicato a kafka permette di monitorare i nodi del cluster kafka e tiene traccia dei topic. Attraverso il protocollo Zookeper Atomic Broadcast (ZAB) è possibile gestire gli aggiornamenti in maniera ordinata.
+Zookeper si utilizza anche per la gestione di fallimenti nel passaggio di informazioni, il suo recovery ed in fine per la gestione degli accessi ACLs
 
 Avviamo la sessione server di kafka:  
 `bin/kafka-server-start.sh config/server.properties`  
@@ -87,3 +103,9 @@ Per eliminare i dati di ambiente che sono stati generati durante l'elaborazione,
 Attraverso **kafka Connect** è possibile scrivere o ricevere dati da sistemi esterni. Spesso i pacchetti per l'interconnesisone sono proprietari delle piattaforme e supportati separatamente da kafka.
 Un elenco dei pacchetti per varie applicazioni si possono trovare nella seguente sezione [Ecosistema kafka](https://cwiki.apache.org/confluence/display/KAFKA/Ecosystem)
 
+
+# Logica della suddivisione delle partizioni e la suddivisione del carico
+
+I producer utilizzano la logica definita nelle partizioni per suddividere i messaggi. La strategia di base è quella di discriminare la partizione in funzione della chiave dell'evento, mentre se non è presente una chiave si utilizza la strategia round robin e quindi la suddivisione dei messaggi su tutte le partizioni. In generale queste logiche possono essere sovrascirtte per generare una logica delle partizioni proprietaria. 
+
+Per quanto riguardo il consumer abbiamo che esso è legato ad un topic e quindi quando richiede delle nuove info manda un messaggio dicendo questo è il mio topic e questo è l'ultimo offset che ho letto ci sono nuovi messaggi per me? 
