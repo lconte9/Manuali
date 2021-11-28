@@ -46,3 +46,6 @@ per ovviare alla problematica di pip si possono utilizzare gli alias:
 ma ciò non basta, in genere ci sono dei problemi relativi alla versione di pip che non viene risolta solo con gli alias poiché viene effettuato un controllo tra la versione di pip che vuole intallare un programma e se le versioni di pip per verisone di python non sono le stesse, tutte le oprazioni di pip danno errore
 
 In questo modo abbiamo che quando si cambia verisone di python cambia anche la versione di pip per installazione
+
+Settiamo la versione di python di default, vediamo la versione di pip che si ha con il comando `pip -V` e passiamo alla versione di python installata sucessivamente e lanciando il comando pip contenuto nella cartella local bin cambiamo verisone di pip : `pip3.8 install pip==20.3.4`.
+Questo era il caso della mia versione.

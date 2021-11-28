@@ -365,3 +365,4 @@ per killare una sessione di screen il comando è il seguente :
 
  
 
+# connessione in ssh ed interazione con i server 

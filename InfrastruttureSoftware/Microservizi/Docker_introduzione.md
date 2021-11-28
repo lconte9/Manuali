@@ -10,7 +10,8 @@ I container sono diventati popolari dal momento che offrono molteplici vantaggi,
 + Coerenza di ambiente tra sviluppo, test e produzione: i container funzionano allo stesso modo su un computer portatile come nel cloud.
 + Portabilità tra cloud e sistemi operativi differenti: lo stesso container funziona su Ubuntu, RHEL, CoreOS, on-premise, nei più grandi cloud pubblici e da qualsiasi altra parte.
 + Gestione incentrata sulle applicazioni: Aumenta il livello di astrazione dall'esecuzione di un sistema operativo su hardware virtualizzato all'esecuzione di un'applicazione su un sistema operativo utilizzando risorse logiche.
-+ Microservizi liberamente combinabili, distribuiti, ad alta scalabilità: le applicazioni sono suddivise in pezzi più piccoli e indipendenti che possono essere distribuite e gestite dinamicamente - niente stack monolitici che girano su una singola grande macchina.
++ Microservizi liberamente combinabili, distribuiti, ad alta scalabilità: le applicazioni sono suddivise in pezzi più piccoli e indipendenti che possono essere distribuite e gestite dinamicamente 
++ niente stack monolitici che girano su una singola grande macchina.
 + Isolamento delle risorse: le prestazioni delle applicazioni sono prevedibili.
 + Utilizzo delle risorse: alta efficienza e densità.
 
@@ -22,4 +23,14 @@ Nello specifico Docker consente di :
 
 
 
+# Versioni 
+Come per tutti i software abbiamo differenti versioni e sono :  
++ comunity edition CE : verisone gratuita 
++ Enterprice edition EE : versione a pagamento per progetti aziendali si paga per nodo
 
+per ogniuna delle due abbiamo anche un altra divisione ed è :
++ Stable : versione stabile 
++ Edge : versione con gli ultimi aggiornamenti e ha supporto mese per mese
+
+
+Doker va installato in funzione dello specifico sistema operativo che si sta utilizzando.
