@@ -205,10 +205,11 @@ sudo docker run (vecchia versione)
 ```
 
 
+
 ## docker image ls 
 Stampa l'elenco delle immagini presenti sul dispositivo e attive; se si vuole vedere le imamgini ancora presenti e pronte per un nuovo riavvio lanciare il comando con l'opzione -la
 
-
+# Docker container
 
 ## docker container inspect <nomeContainer>
 Da dettagli sulla configurazione dei container, restituisce un json
@@ -227,8 +228,9 @@ Questa nuova istanza è generata a partire dall'immagine, gli viene associato un
 opzioni :
 + -t : lancia un istanza da un immagine e apre una shell dell'stanza esegunedone un comando 
 + -i : tiene attivo il buffer dei comandi cosi da poter interagine con il container
-+ --publish <porta_publica:porta_privata >: l'istanza appena lanciata è resa accessibile alla porta publica e riceve le info sulla porta privata.
++ -p , --publish [porta_publica:porta_contianeir]: l'istanza appena lanciata è resa accessibile alla porta publica e riceve le info sulla porta privata.
 + --name : nome univuoco dell'istanza
++ --network : collega un container alla rete 
 
 tramite l'opzione -it possaimo cambiare il comando di esecuzione del container. Quando avviamo un docker viene lanciato un comando di default, e finché il comando non termina il container continua ad eseguire l'operazione. Lanciando un comando diverso da quello di default quando questo termina termina anche il container
 
@@ -245,3 +247,73 @@ Aggiunge un processo agiuntivo.
 Opzioni:
 + i: --interactive
 + t: pseudo tty
+
+
+## docker container port [nomeContainer]
+Ottini le porte aperte, con l'opzione di -p del comando run, del container.
+
+## docker container inspect [opzioni] '{{info}}' [nomeContainer]
+Ottieni info sul container 
+opzioni :
++ -f, --format : ottine una specifica info
+info :
++ .NetworkSettings.IPAddress : ip del container nella sottorete virtuale
+
+
+
+
+# Docker Network
+
+## docker network ls [opzione]
+visualizzare le reti
+opzioni:
++ -f : filter esempio `-f driver=bridge`
++ -q : mostra solo l'id
++ --no-trunc : mostra l'intero id
+
+## docker network inspect [nomeRete]
+Ispeziona dati avanzati della rete
+
+
+
+## docker network create [opzione]
+Crea una nuova rete virtuale. Di default il driver è bridge.
+
+opzioni:
++ -d , --driver : creazione di una sottorete con un specifico driver anche di terze parti
+
+
+
+## docker network connect/disconnect [id_rete] [id_container]
+Permettono di connettere una rete o di disconnetterla dal host un po come collegare una scheda di rete.
+
+
+
+
+
+# Docker build
+
+## docker image tag [nome_image:tag] [nuovo_nome_image:tag]  
+Crea un alias per un nome di immagine
+
+## docker login 
+Si connette al repository privato sull'hub docker
+
+## docker logout
+Si diconnette dal repository
+
+## docker image pull [nome_image:tag]
+scarica l'immagine da noi scelta
+
+## docker image push [nome_image:tag]
+Carica sul nostro repository l'immagine
+
+## docker image build [opzione] [nome_image:tag] [path_cartella_salvataggio]
+questo comando va lanciato nella cartella contente il Dockerfile e tutti i file utili alla creazione dell'immagine, in fine l'imaigine risultante viene salvata nella cartella definita dalla path_cartella_salvataggio.
+
+
+
+
+
+
+

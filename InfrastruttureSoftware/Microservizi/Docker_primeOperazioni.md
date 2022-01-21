@@ -56,7 +56,7 @@ Con questo comando possiamo eliminare le istanze che sono state terminate, mentr
 
 Un ultima osservazione sul comando run, il comando run crea una nuova istanza del immagine mentre possiamo utilizzare il comando start per avviare un istanza che è stata terminata. Cosi facendo possiamo far ripartire un container che aveva già un lavoro in corso con eventualmente dei settaggi.
 
-### approfondimento sul comando run 
+## approfondimento sul comando run 
 
 Quando lanciamo il comando run con il nome di un immagine, questo cercherà in locale se è presente tale immagine e se non lo è la scaricherà dal docker hub (repository predefinito).
 una vota ottenuta l'immagine (che se non specificata la versione scaricherà l'ultima disponibile nginx:latest), creerà un nuovo container basato sull'immagine e preparerà lo start del container.
@@ -99,3 +99,63 @@ Possiamo avviare un immagine che è già stata avviata attraverso il comano star
 Un SO molto utile per i docker è Alpine, questo SO è molto minimale, ha una dimensione di appena 3MB e quindi si presta per le esecuzioni dei contianer.
 É talmente piccolo come SO che non ha nemmeno il comando bash, ma in compenso ha il comando sh, quindi è possibile accedere attraverso il comando: `sudo docker container run -it alpine sh`
 Il suo gestore di pacchetti è apk.
+
+# Network
+
+Fino a questo punto non ci siamo mai preoccupati della rete. Se proviamo ad aggiornare un pacchetto su di un immagine docker o se proviamo ad installare un applicazione noteremo che questa viene scaricata dal repository in rete ed installata nel container. Questo indica che il docker è connesso in rete e può scambaire in formazioni di default.
+Infatti il settaggio di base quando avvio un docker è il bridge, cioè che ogni container comunica con gli altri in ingresso ed in uscita e che può inviare e ricevere informazioni dal web.
+Inoltre attraverso l'opzione -p possiamo indicare su quale porta il servizio è in ascolto. In realtà è possibile non esporre i container sulla rete privata ma associare i servizi in modo che comunichino tra di loro. questo permette, ad esempio, che un server apache aperto alla porta 80 comunichi con un container con un instanza di MySQL senza che quest'ultima abbia una porta aperta.
+
+Questi comportamenti appena descritti sono tranquillamente modificabili. 
+Un esempio banale è la creazione di più reti virtuali. Un container può essere collegato a più reti o a nessuna. Puoi impostare che la rete più esterna sia configurata sulla base di quella dell'host ottenendo il suo ip (in alcuni casi è obbligatoria) (--net=host).
+Esistono tutta una serie di driver di rete aggiungibili all'ecosistema e sviluppati da terze parti.
+
+![](../../immagini/Networ_Docker.png)
+
+
+Un accortezza, **in un host non ci possono essere più servizi che comunicano sulla stessa porta**.
+
+Un primo comando per vedere le reti esistenti è `docker network ls`.
+
+Una volta avviato, in funzione del SO si vedranno 3 reti e sono :
++ bridge: rete collegata alla rete dell'host che permette la connessione verso il NAT
++ host : rete speciale che collega direttamente i docker sulla rete dell'host, semplifica lo sviluppo ma sacrifica la sicurezza, permette una performance migliore della rete.
++ null: è una rete non connessa a nulla e non configurata.
+
+Alla creazione di un nuovo container nella rete gli verrà assegnato un ip direttamente dal sistema.
+
+Per creare una nuova rete basta lanciare il comando: `docker network create nome_rete`.
+
+Di default verrà assegnato come driver bridge.
+
+**NIC Network Interface Card**
+
+Se si vuole connettere ad un rete virtuale un container è possibile utilizzare il comando `docker network connect id_rete id_container` in questo modo si connette il container alla nuova rete e se lanciamo il comando `docker contianer inspect id_container` possiamo vedere come questo sia conesso a due sottoreti e per ogniuna ha un ip diverso.
+
+Come per la connessione possiamo eseguire il comando `docker network disconnect id_rete id_container` per rimuovere l'accesso alla rete del container.
+
+Connect e disconnect non fanno altro che creare e rimuovere un NIC.
+
+## Osservazio sulla sicurezza
++ Evitare di inserire il frontend ed il backend sulla stessa sottorete
++ le comunicazioni interne non dovrebbero lasciare l'host
++ chiudere le porte esterne di default
++ esporre solo le porte che servono con il comando **-p --publish** 
+
+## DNS
+Domain Name System, sono il modo per interconnettere i container. Considerando il paragrafi precedenti possiamo pensare che il modo in cui possiamo interconnettere i container sia tramite il loro ip. Questa pratica è considerata sbagliata e un anti-pattern, ciò dovuto al fatto che gli ip possono variare minuto per minuto, un container potrebbe andare off e quindi il sistema potrebbe ricaricarlo con un altro ip, ecc.  
+Per i docker si utilizza il **Docker daemon** che possiede una funzione build-in di DNS server che viene utilizzata di default.
+Con questo sistema è possibili far comunicare due container in diverse sottoreti. Di default i nomi DNS sono i nomi dei container ma è possibile utilizzare un alias. 
+
+Un test per comprendere se due sottoreti sono in grado di comunicare è il segunete:  
++ creare due sottoreti con il comando `docker network create rete1` e `docker network create rete2`
++ avviare su ognuna delle due reti un istanza di nginx con i comandi: `docker container run -d --name web_rete1 --network rete1 nginx` e `docker container run -d --name web_rete2 --network rete2 nginx`
++ lanciare il comando `docker container exec -it web_rete1 ping web_rete2` 
++ lanciare il comando `docker container exec -it web_rete2 ping web_rete1`
+
+Lanciando i comandi vedremo che i pacchetti vengono inviati e ricevuti, questa è una dimostrazione del collegamento delle due reti.
+
+
+**NB: la rete bridge di default non ha il servizio DNS. Per poter collegare un container su quella rete dobbiamo utilizzare l'opzione --link**
+
+Questi settaggi rimangono validi, utilizzando compose in futuro queste impostazioni verranno semplificate.
