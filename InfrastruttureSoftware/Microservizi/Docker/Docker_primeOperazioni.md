@@ -110,7 +110,7 @@ Questi comportamenti appena descritti sono tranquillamente modificabili.
 Un esempio banale è la creazione di più reti virtuali. Un container può essere collegato a più reti o a nessuna. Puoi impostare che la rete più esterna sia configurata sulla base di quella dell'host ottenendo il suo ip (in alcuni casi è obbligatoria) (--net=host).
 Esistono tutta una serie di driver di rete aggiungibili all'ecosistema e sviluppati da terze parti.
 
-![](../../immagini/Networ_Docker.png)
+![](../../../immagini/Networ_Docker.png)
 
 
 Un accortezza, **in un host non ci possono essere più servizi che comunicano sulla stessa porta**.
