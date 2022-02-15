@@ -1,4 +1,4 @@
-# Comandi del terminale utili con le loro opzioni 
+# Comandi del terminale utili con le loro opzioni 5
 
 ## ls 
 Questo comando serve per vedere il contenuto della directory attuale con la sintassi :  
