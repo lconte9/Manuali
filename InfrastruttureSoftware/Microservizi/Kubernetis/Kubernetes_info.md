@@ -3,7 +3,7 @@
 
 
 
-![](../immagini/container_evolution.svg)
+![](../../../immagini/container_evolution.svg)
 Immagine presa dal sito di kubernetes.io
 
 Questa immagine rappresenta l'evoluzione dell'implementazioni di sistemi software in funzione della sempre maggior richiesta del mercato di ottimizzare l'hw proprietario.

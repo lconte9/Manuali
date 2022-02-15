@@ -62,5 +62,64 @@ Il comando è il seguente: `docker image build -t nome_immagine:tag .` Con quest
 
 Una volta lanciato il comando verrà mostrato a video le operazione indicate separate da steps che stanno ad indicare le macro operazioni definite nel dockerfile, queste sono segnate con degli hash che rappresentano lo stato del codice nello step, se questo viene cambiato allora l'hash si modfica altrimenti non viene rieseguoto il codice.
 
+# Container registries
+
+La gestione delle immagini docker è un fattore molto importante nello sviluppo. una soluzione è il docker hub, ma in funzione dei bisogni abbiamo anche docker store e docker cloud, e altre soluzioni di terze parti.
+
+Queste soluzioni sono tutte a livello business, una soluzione per la gestione di immagini private è **Docker Registry**. 
+
+## Docker hub 
+
+Il primo è docker hub, uno dei più famosi sistemi di gestione di immagini. Tra tutti è quello più leggero sia per la gestione che per la costruzione delle immagini.
+Soluzioni simili sono github e bitbucket che presentano feature di building al commit.
+
+Docker hub è una soluzione build in di docker. permette di creare immagini private e pubbliche, dare accesso a dei collaboratori e tramite il proprio account collegarsi ad altri account. Questa soluzione è molto simile a github.
+
+In realtà la funzionalità più importate è il build automoatico. Se si va nella sezione **Create automate build** è possibile collegare un repository github o bitbucket, dove ogni volta che viene eseguito un commit al repository, automaticamente verrà avvisato docker hub che provvederà al build e allo storage. Una volta effettuato il collegamento iniziale sarà possibili visionare tutti i build dell'immagine e si avrà accesso anche a degli ulteriori settaggi.
 
 
+## Docker registry privato
+
+Ci sono varie soluzioni per implementare un proprio gestore delle immagini on premises. 
+Quella open source che utilizza docker hub è **registry** immagine docker per la gestione delle immagini implementabile in locale o su di un server mentre possiamo ricercare il codice sorgente di registri sotto il nome **distribution** in github.
+
+Questo gestore non ha una gui e gestisce build in certificati ed autorizzazioni anche se vanno impostati e non attivi di default. L'autenticazione non prevede i ruoli e i permessi, quindi una volta che si ha accesso di può leggere e scrivere tutto. 
+
+Questo servizio ha anche un sistema di storage interno ed espone API web, tutto scritto in Go.
+Supporta l'utilizzo a S3, Azure, Alibaba, Google cloud e OpenStack, nativamente.
+
+### Avvio registry container
+
+Per avere un sistema funzionante e funzionale per la gestione delle immagini dobbiamo valutare alcuni topic sul settaggio, tra cui:
++ Settare il protocollo TLS
++ Settare il garbage collection per la pulizia dello storage
++ Abilitare hub docker caching con l'opzione `--registry-mirror` (salva le immagini che scarichi cosi da non doverle ottenere ogni volta da dockerhub)
+ 
+Il registro dei container non è altro che un server http con porta di default 5000 e quando modifichiamo un immagine e la salviamo essa verrà ritaggata prima di essere inserta nel registro personale.
+
+Di base i docker register non avviano una connessione se questa non ha definito un protocollo https, ciò non accade quando lavoriamo in locale (127.0.0.0/8). Questa operazione può essere bypassata abilitando **insicure-registry** nel gestore, ciò se vuoi evitare di creare dei certificati ad hoc per te.
+
+Per avviare il registry basta lanciare il comando: `docker contianer run -d -p 5000:5000 --name registry -v /path_dell'host:/var/lib/registry registry`
+
+A questo punto dobbiamo impostare il comando docker image, in modo che punti al nuovo container.
+
+Per poter utilizzare il repository prima di tutto dobbiamo cambiare il tag dell'immagine tramite il comando `docker tag nome_immagine 127.0.0.1:5000/nome_immagine`.
+
+Una volta che abbiamo aggiunto il tag possiamo vedere le immagini presenti sul pc con il comando: `docker image ls` e noteremo che ora sono presenti due immagini: una originale e una con il nuovo tag.
+
+Ora se vogliamo caricare questa nuova immagine nel nostro repository possiamo utilizare il comando: `docker push 127.0.0.1:5000/nome_immagine`.
+
+Se vogliamo scaricare l'immagine appena creata dal nostro registry in locale possiamo utilizzare il comando: `docker pull 127.0.0.1:5000/nome_immagine`, in questo modo verrà scarcata l'immagine locale.
+
+### Uso di docker registry con swarm
+
+Possiamo utilizzare registry anche con swarm, con l'aggiunta che essendo nella routing mesh il registry è visibile dai container all'indirizzo localhost o all'ip 127.0.0.1:5000.
+Inoltre una volta settato il registro con un volume esso verrà montato automaticamente.
+Per creare il servizio registry utilizziamo il comando: `docker service create --name registry --publish 5000:5000 registry`
+
+In questo modo viene avviato il servizio registry. Possiamo utilizzare i comandi di prima per caricare il nostro registry. 
+**NB possiamo vedere l'elenco delle immagini presenti del repository collegandoci alla porta 80 dell'ip del servizio registry e aggiungendo la path /v2/_catalog**
+
+Una volata caricata l'immagine nel nostro registry possiamo creare un service da quella con il comando: `docker service create --name nginx -p 80:80 127.0.0.1:5000/nginx`
+
+Anche se ci troviamo in una situazione con più nodi possiamo continuare ad utilizzare il localhost per riferirci a  registry e ciò grazie a swarm che reindirizza le richieste ai giusti servizi e tutti i nodi hanno accesso alle immagini.

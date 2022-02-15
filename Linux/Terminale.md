@@ -363,6 +363,48 @@ i comandi della modalità comandi sono :
 per killare una sessione di screen il comando è il seguente :
 `screen -X -S PID quit`
 
- 
+
+# comandi per la gestione della connessione
+
+## iw 
+Gestione delle periferiche wireless
+
+sintassi: iw [options] object_command
+
+option: 
++ --version 
++ --debug
+
+object:
++ dev: nome interfaccia rete
++ phy: dati approfonditi 
+
+sintassi plus: iw nome_hw opzione
+
+opzione:
++ link: info sullo stato della periferica
++ scan: stampa l'elenco delle reti con dettaglio (se non escono reti ma un errore la scheda potrebbe essere disattivata)
+
+
+## ip 
+manipola il routing, i device di rete, interfacce e tunnel
+
+sintassi: ip [option] obj [command]
+
+example:
++ ip link set wlp3s0 up  : attiva il device di rete definito
+
+
+## nmcli 
+comandi per il menager della rete
+
+sintassi: nmcli [option] {obj} [command] [argument]
+
+RADIO TRANSMISSION CONTROL COMMANDS
+tanta roba
+per connettersi:
+nmcli dev wifi connect SSID password localhost22
 
 # connessione in ssh ed interazione con i server 
+
+
