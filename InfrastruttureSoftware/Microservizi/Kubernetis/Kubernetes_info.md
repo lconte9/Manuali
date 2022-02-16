@@ -3,6 +3,10 @@
 
 
 
+
+
+
+
 ![](../../../immagini/container_evolution.svg)
 Immagine presa dal sito di kubernetes.io
 
