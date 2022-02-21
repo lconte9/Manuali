@@ -200,3 +200,142 @@ npm run dev
 ```
 
 ora qualsiasi modifica faremo al componente verrà automaticamente buildata e aggiornata nell'app
+
+# Condivisione della libreria
+
+Supponiamo di voler condividere il repositori nel nostro team utilizzando github e voglio che solo io posso modificare la libreria.
+
+Inziamo con il caricare la libreria su github:
++ creiamo un token personale con i permessi di write:packages, read:packages
++ creiamo il file ".npmrc" nella directory dove abbiamo package.json inserendo la seguente stringa: 
+    + `//npm.pkg.github.com/:_authToken={TOKEN}` sostituendo il token generato precedentemente
++ creiamo il repository della nostra libreria
++ carichiamo la libreria su github
+
+
+Ora è arrivato il momento di modificare il package.json aggiungendo le seguenti modifiche:
++ rinominiamo la libreria utilizzando il seguente pattern: `@owner/repo-name` nel nostro caso abbiamo: `@lconte9/esempio_libreria`
++ aggiungiamo una chiave al primo livello :
+```json
+"files": [
+        "./dist"
+    ],
+"publishConfig": {
+        "registry": "https://npm.pkg.github.com"
+    },
+ "repository": "git://github.com/lconte9/esempio_libreria",
+```
+In pratica comunichiamo che i file che devono essere scaricati sono quelli presenti nella cartella "dist", utilizziamo la configurazione di npm per github ed inseriamo il link del repository
++ in ultimo eliminiamo la chiave: `"private":true`
+
+Il risultato finale è simile al seguente:
+```json
+{
+    "name": "@hinammehra/auth-component-library",
+    "files": [
+        "./dist"
+    ],
+    "publishConfig": {
+        "registry": "https://npm.pkg.github.com"
+    },
+    "repository": "git://github.com/hinammehra/auth-component-library",
+    "version": "0.1.0",
+    "main": "dist/index.cjs.js",
+    "module": "dist/index.esm.js",
+    "source": "src/index.js",
+    "dependencies": {
+        "react-scripts": "3.4.3"
+    },
+    "scripts": {
+        "build": "rollup -c",
+        "build-watch": "rollup -c -w",
+        "start-playground": "cd playground && npm run start",
+        "i-all": "npm i && cd playground && npm i",
+        "dev": "npm-run-all --parallel build-watch start-playground"
+    },
+    "eslintConfig": {
+        "extends": "react-app"
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    },
+    "devDependencies": {
+        "@babel/cli": "^7.10.5",
+        "@babel/core": "^7.11.4",
+        "@babel/preset-env": "^7.11.0",
+        "@babel/preset-react": "^7.10.4",
+        "@rollup/plugin-babel": "^5.2.0",
+        "npm-run-all": "^4.1.5",
+        "rollup": "^2.26.4",
+        "rollup-plugin-delete": "^2.0.0",
+        "rollup-plugin-peer-deps-external": "^2.2.3"
+    },
+    "peerDependencies": {
+        "@material-ui/core": "^4.10.2",
+        "react": "^16.13.1",
+        "react-dom": "^16.13.1"
+    }
+}
+```
+
+Ora possiamo utilizzare npm per eseguire il push della libreria con il comando: `npm publish`
+
+# utilizzo della libreria da parte di un utente senza permessi di modifica della libreria
+
+Una volta creato il nuovo progetto react creiamo il file .npmrc inserendo i seguenti dati:
+```
+//npm.pkg.github.com/:_authToken={TOKEN}
+registry=https://npm.pkg.github.com/{OWNER}
+```
+Il token viene generato dal utente con i permessi definiti dal owner.
+
+Ora per installare la libreria con npm utilizziamo il comando: `npm install @owner/repo-name`
+
+e per importarlo nel progetto possiamo utilizzare la seguente sintassi:
+```jsx
+import { HelloWorld } from '@lconte/esempio_libreria';
+
+function App() {
+  return (
+    <HelloWorld />
+  );
+}
+
+export default App;
+```
+
+
+# ulteriori modifiche al nostro componente
+
+Supponiamo di voler creare un'altro componente della libreria; basterà creare un nuovo file e costruitre il componenete e poi riportarlo nel file index secondo la seguente sisntassi:
+```jsx
+export { default as HelloWorld } from './components/HelloWorld';
+export { default as NuovoComponente } from './components/nuovoComponente';
+```
+
+Ora se vogliamo testare il nuovo componente dobbiamo andare nel progetto playground ed aggiungere le libreria tramite quelle definite nella librera, come fatto prima per react, react-dom e esempio_libreria.
+un esempio è il seguente, dove abbiamo inserito alcune librerie come materialui, yup e formik:
+```json
+"dependencies": {
+        "@material-ui/core": "file:../node_modules/@material-ui/core",
+        "@material-ui/icons": "file:../node_modules/@material-ui/icons",
+        "@testing-library/jest-dom": "^4.2.4",
+        "@testing-library/react": "^9.5.0",
+        "@testing-library/user-event": "^7.2.1",
+        "auth-component-library": "file:..",
+        "formik": "file:../node_modules/formik",
+        "yup": "file:../node_modules/yup",
+        "react": "file:../node_modules/react",
+        "react-dom": "file:../node_modules/react-dom",
+        "react-scripts": "3.4.3"
+    },
+```
