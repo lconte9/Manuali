@@ -6,9 +6,9 @@ Non si occupa della gestione dati per questo che genralmente viene distribuita c
 AS si basa sul paradigma master slave. questo paradigma si realizza tramite il driver che istruisce gli executer su i processi che devono eseguire. Il coordinatore degli executer è il componente **SparkContext** nel driver, che per potersi connettere ai vari cluster (serie di pc collegati definiti nodi) utilizza il **Cluster Manager** che alloca risorse tra le applicazioni.
 
 Una volta connesso, spark acquisisce gli esecutori sui nodi del cluster che sono processi che eseguono i calcoli ed archiviano i dati e successivamente invia il codice dell'applicazione (file JAR o Python) agli executer.
-Gli executer xono responsabili dell'esecuzione effettiva. Quindi gli executer sono responsabili solo del calcolo assegnato e della risposta al nodo driver.
+Gli executer sono responsabili dell'esecuzione effettiva. Quindi gli executer sono responsabili solo del calcolo assegnato e della risposta al nodo driver.
 Questa modalità è definita **cluster mode**
-![](../immagini/come-lavora-un-cluster.png)
+![](../../immagini/come-lavora-un-cluster.png)
 
 Spark può lavorare anche nella modalità **client mode** cioè SparkContext e il driver lavorano sullo stesso nodo. 
  

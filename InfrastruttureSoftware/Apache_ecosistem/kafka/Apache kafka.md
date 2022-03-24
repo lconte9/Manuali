@@ -15,7 +15,7 @@ Un semplice eveto è il seguente :
 
 I topic di kafka sono suddivisi in due tipologie e sono : **normal topic** e **compacted topic**, la prima definisce un flusso dati che deve essere elaborato e dopo un certo periodo di tempo deve essere eliminato mentre il secondo vene utilizzato per quei flussi che devono essere salvati per lunghi periodi. 
 
-![](../immagini/StrutturaKafka.png)
+![](../../immagini/StrutturaKafka.png)
 
 La truttura dei topic più nel dettaglio è la seguente :  
 ![](../immagini/apache-kafka-architecture-fundamentals-explained-13-638.jpg)
