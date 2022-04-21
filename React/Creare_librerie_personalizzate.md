@@ -208,7 +208,7 @@ Supponiamo di voler condividere il repositori nel nostro team utilizzando github
 Inziamo con il caricare la libreria su github:
 + creiamo un token personale con i permessi di write:packages, read:packages
 + creiamo il file ".npmrc" nella directory dove abbiamo package.json inserendo la seguente stringa: 
-    + `//npm.pkg.github.com/:_authToken={TOKEN}` sostituendo il token generato precedentemente
+    + `@OWNER:registry=https://npm.pkg.github.com //npm.pkg.github.com/:_authToken=TOKEN` sostituendo il token generato precedentemente
 + creiamo il repository della nostra libreria
 + carichiamo la libreria su github
 
@@ -223,7 +223,7 @@ Ora è arrivato il momento di modificare il package.json aggiungendo le seguenti
 "publishConfig": {
         "registry": "https://npm.pkg.github.com"
     },
- "repository": "git://github.com/lconte9/esempio_libreria",
+ "repository": "git://github.com/lconte9/esempio_libreria.git",
 ```
 In pratica comunichiamo che i file che devono essere scaricati sono quelli presenti nella cartella "dist", utilizziamo la configurazione di npm per github ed inseriamo il link del repository
 + in ultimo eliminiamo la chiave: `"private":true`
@@ -238,7 +238,7 @@ Il risultato finale è simile al seguente:
     "publishConfig": {
         "registry": "https://npm.pkg.github.com"
     },
-    "repository": "git://github.com/hinammehra/auth-component-library",
+    "repository": "git://github.com/hinammehra/auth-component-library.git",
     "version": "0.1.0",
     "main": "dist/index.cjs.js",
     "module": "dist/index.esm.js",
@@ -339,3 +339,6 @@ un esempio è il seguente, dove abbiamo inserito alcune librerie come materialui
         "react-scripts": "3.4.3"
     },
 ```
+
+Ogni volta che si fa `npm publish` ricrodare di cambiare la versione nel file package.json
+

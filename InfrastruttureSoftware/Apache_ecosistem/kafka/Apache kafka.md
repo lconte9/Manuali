@@ -15,10 +15,10 @@ Un semplice eveto è il seguente :
 
 I topic di kafka sono suddivisi in due tipologie e sono : **normal topic** e **compacted topic**, la prima definisce un flusso dati che deve essere elaborato e dopo un certo periodo di tempo deve essere eliminato mentre il secondo vene utilizzato per quei flussi che devono essere salvati per lunghi periodi. 
 
-![](../../immagini/StrutturaKafka.png)
+![](../../../immagini/StrutturaKafka.png)
 
-La truttura dei topic più nel dettaglio è la seguente :  
-![](../immagini/apache-kafka-architecture-fundamentals-explained-13-638.jpg)
+La sruttura dei topic più nel dettaglio è la seguente :  
+![](../../../immagini/apache-kafka-architecture-fundamentals-explained-13-638.jpg)
 
 Il broker (possiamo considerarlo come componente fisico che memorizza l'informazione) i topic sono suddivisi in più partizioni che possono esssre replicate su più broker nel cluster (rappresenta il componente logico ).
 Ogni partizione può essere gestita in un modo differente e cioè possiamo utilizzare le partizioni per per dividere i vari messaggi oppure possiamo inserire gli stessi messaggi in più partizioni generando delle ridondanze. 
@@ -38,7 +38,7 @@ Kafka si basa su 5 interfacce chiave e sono :
 + **kafka Connect**: interfaccia per collegare sistemi esistenti (esegue il funzionamento di producer e consumer tra sistemi che implementano gia kafka di default es influxdb, ecc)
 + **kafka AdminClient**: interfaccia di amministrazione e controllo dei cluster kafka
 
-# Utilizzo di base
+# Utilizzo di base (standalone)
 
 Potete scaricare l'ultima versione di kafka dal segunete link [versione 2.8.0](https://downloads.apache.org/kafka/2.8.0/kafka_2.13-2.8.0.tgz).
 
