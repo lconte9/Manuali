@@ -1,695 +1,475 @@
-# Redux
-Libreria JS per la gestione dello stato dei componenti.
+# Intro
+Aggornamento 03/2023
 
-Redux si basa sui concetti di : Store, Reducer e Action, lo store è il contenitore delle variabili che definiscono lo stato, il reducer è la funzione che ad un determianto evento modifica lo store e la action rappresenta le azioni che generano eventi letti dal reducer.
+Con gli aggiornamenti proposti nell'ultima versione di redux vengono implementate delle nuove logiche di utilizzo, tramite l'utilizzo degli hooks è possibile affiancare ai componenti lo store senza dover creare dei macro blocchi per la gestione delle azioni tramite i reducer. Questo permette di integrare redux direttamente nei componenti presentazionali invece di dover racchiudere questi ultimi utilizzando la funzione connect come wrapper al componente. In questo modo si rimuovono i container e tutte le definizioni mapStateToProps e mapToDispatch.
 
+La nuova logica permette uno sviluppo orientato al singolo componente funzionale.
 
-# installazione
-Per installare Redux basta lancire il comando `npm install --save redux` dalla cartella principale della nostra applicazione.
+# Logica di funzionamento
+Il pattern su cui si basa Redux è il flux pattern, di seguito un immagine esplicativa:
+![](../immagini/fluxPattern.png)
 
-# Operazioni di base
+Tutto parte dall'interazione utente che avvia un action creatore che si occupa di gestire le chiamate esterne al sistema (spesso asincrone e gestibili tramite middlware per semplicficare l'interazione). Il rusultato dell'operazione attiva l'action vera e propria che attiva un dispatcher cioè un metodo dello store alla quale viene passata una specifica azione con un payload, nel caso cene sia bisogno, che attiva il reducer (nell'immagine la callback). Lo store è l'effettiva base di dati dell'applicazione front end, questo è un elemento immutabile che tiene traccia dei cambiamenti che avvengono su di esso e genera i trigger che permettono l'aggiornamento del componente alla quale è collegato. in questa parte di logica abbiamo tutto lo stack react che di occupa dell'aggiornamento del DOM e di conseguenza l'aggiornamento del commponente.
 
-Queste operazioni che presento di seguito rappresentano il comportamento base della libreria Redux
+Grossolanamente questo avviene in un esecuzione completa di un azione quando utilizziamo redux nelle nostre applicazioni.
 
-## Creazione dello store
+Questa logica permette di integrare soluzioni di test e vefica del codice, sia per la separazione delle responsabilità sia per l' integrazione di middleware che semplicficano lo sviluppo e la gestione delle richieste.
 
-La store è il contenitore nella quale andremo ad inserire i dati ottenuti dal backend e che utilizzeremo per passare le varie informazioni ai vari componenti di react in pratica lo stato della nostra applicazione. 
-
-Innanzitutto dobbiamo inizializzare una Store, andiamo nel componente radice della nostra applicazione ( con react sarà App) e importiamo la funzione **createStore** :
-```js
-import {createStore} from 'redux';
-```
-
-Una volta richiamata la funzione possiamo andare a sfruttare il ciclo vita del componente App per creare uno store ogni volta che carichiamo il componente App: 
-
-```js
-componentDidMount(){
-    const store = createStore( (state = {}, action ) => {
-        return {...state}; 
-    } )
-}
-```
-Questo store definito in questo modo non effettua nessun azione, ma ci serve come definizione. Quando creiamo questo oggetto store, noi utilizziamo la funzione createStore che inizializza la nostra banca dati con la variabile state che rappresentano il contenuto e con delle action che rappresentano le operazioni da eseguire per ottenere i dati. tutta l'arrow function viene definita come Reducer cioè la funzione che modifica lo stato della nostra applicazione. 
-
-Il concetto di Reducer è comune in JS e rappresenta una funzione che dato uno stato iniziale esegue delle operazioni che effettuano il passaggio di stato un esempio è il seguente :
-```js
-[1,2,3,4].reduce((n,p) => n*p)
-// il risultato è 24
-```
-Questa operazione non fa altro che prendere i valori dell'array e moltiplicare il valore attuale per lo stato precedente affinche si ottenga lo stato successivo quindi abbiamo che nella prima iterazione lo stato è nullo * il valore 1 ottenendo lo stato 1, nella seconda iterazione abbiamo lo stato attuale che 2 e lo moltiplichiamo con lo stato precedente che è 1 ottenendo lo stato successivo 2, iterando queste operazioni abbiamo 2*3 = 6 e 6*4= 24.
-
-Per semplificare la trattazione riscrivero il codice di App : 
-```js
-import React from 'react';
-import { createStore } from 'redux';
-
-function storeReducer( state = {}, action) {
-    return {...state};
-}
-
-class App extends React.Component {
-    constructor (){
-        super()
-    }
-
-
-    componentDidMount(){
-        const store = createStore( storeReducer )
-    }
-}
-```
-La funzione createStore prende in ingresso 3 variabili e sono : 
-+ il Reducer
-+ lo stato iniziale 
-+ un eancher cioè una funzione che permette di applicare dei servizi come l'utilizzo di plugin per il browser o dei middleware tramite applyMiddleware (vedremo nel paragrafo sui Middleware)
-
-Qundi a valle di ciò possiamo aggirnare la nostra funzione definendo un array con delle stringhe che possano definre una todolist come ad esempio la lista della spesa :
-
-```js
-import React from 'react';
-import { createStore } from 'redux';
-
-let listaSpesa = [
-    "latte",
-    "uova",
-    "pane"
-]
-
-function storeReducer( state = {}, action) {
-    return {...state};
-}
-
-class App extends React.Component {
-    constructor (){
-        super()
-    }
-
-
-    componentDidMount(){
-        const store = createStore( storeReducer, {lista :[...listaSpesa]} )
-    }
-}
-```
-
-In questo caso abbiamo aggiunto un array allo store utilizzando lo spread operator di JS passando un oggetto che verrà chiamato lista e che conterrà tutti i valori dell'array listaSpesa, Lo spread operator viene utilizzato per il passoggio di varviabili effettuando una copia dello stesso e non il passaggio per riferimento.
-Utilizzando il codice : `consol.log(store.getState())` possiamo visualizzare il contenuto dello store. 
-getState è una funzione specifica per lo store di redux.
-
-
-## Dispatch
-
-Il dispatch rappresenta un messaggio che viene inviato alla store.
-
-Modifichiamo il codice visto affinche lo store sia una variabile globale con la quale possiamo interagire :
-
-```js
-import React from 'react';
-import { createStore } from 'redux';
-
-//questo array definito in questo punto è concettualmente il contenuto del nostro backend 
-let listaSpesa = [
-    "latte",
-    "uova",
-    "pane"
-]
-
-function storeReducer( state = {}, action) {
-    return {...state};
-}
-
-const store = createStore( storeReducer, {lista :[...listaSpesa]} )
-
-class App extends React.Component {
-    constructor (){
-        super(),
-        this.state = {
-            lista : [ ]
-        }
-
-    }
-    
-    //con questa operazione non facciamo altro che caricare il contenuto dello store nella variabile state del componente
-    componentDidMount(){
-         this.setState({lista:[...store.getState().lista] });
-    }
-
-    //definiamo il metodo render che renderizzerà la lista contenuta nello state del componente
-    render(){
-        return (
-            <div>
-            <ul>
-            {
-                this.state.lista.map( (elemento,i) => <li key={i}>{elemento}</li>)
-            }
-            </ul>
-            </div>
-        )
-    }
-}
-```
-
-le modifiche effettuate non fanno altro che aggiornare lo state del componente con il contenuto della store e abbiamo renderizzato la lista degli elementi.
-
-Ora supponiamo di voler modificare lo store attraverso un input :
-
-```js
-import React from 'react';
-import { createStore } from 'redux';
-
-//questo array definito in questo punto è concettualmente il contenuto del nostro backend 
-let listaSpesa = [
-    "latte",
-    "uova",
-    "pane"
-]
-
-function storeReducer( state = {}, action) {
-    return {...state};
-}
-
-const store = createStore( storeReducer, {lista :[...listaSpesa]} )
-
-class App extends React.Component {
-    constructor (){
-        super(),
-        this.state = {
-            lista : [ ]
-        },
-        
-        //definizione di un riferimento al tag input
-        
-        this.listaInput = React.createRef()
-
-    }
-    
-    //con questa operazione non facciamo altro che caricare il contenuto dello store nella variabile state del componente
-    componentDidMount(){
-         this.setState({lista:[...store.getState().lista] });
-    }
-
-    //funzione per l'aggiunta dell'elemento alla lista
-    aggiungiElementoLista = () => {
-        //restituisce il valore contenuto nel tag input attraverso il suo riferimento
-        const elemento = this.listaInput.current.value;
-        
-        // funzione che invia l'oggetto action al reducer per la modifica dello store 
-        store.dispatch({
-            type: "ADD_ELEMENTO"
-            payload : elemento
-        });
-    }
-
-    //definiamo il metodo render che renderizzerà la lista contenuta nello state del componente e aggiungiamo un tag input con un riferimento e un bottone con la funzione di aggiungi elemento
-    render(){
-        return (
-            <div>
-                <input ref = {this.listaInput} />
-                <button onClick = {this.aggiungiElementoLista}> add </button>
-                <ul>
-                    {
-                        this.state.lista.map( (elemento,i) => <li key={i}>{elemento}</li>)
-                    }
-                </ul>
-            </div>
-        )
-    }
-}
-```
-Con queste modifiche appena fatte effettivamente stiamo inviando delle informazioni allo store ma non avendo definito il comportamento del reducer quando vengono effettuate delle action quest'utlimo effettuerà sempre la solita azione e cioè ricaricherà lo stato attuale nello store.
-Per far in modo che il reducer esegua determiante azioni in funzione delle action modifichiamolo come segue :
-```js
-
-function storeReducer( state = {}, action) {
-    switch(action.type) {
-        case "ADD_ELEMENTO" : 
-            return {
-                    lista  : [
-                        action.payload,
-                        ...state.lista
-                    ]
-                }
-
-        default : 
-            return {...state}
-    }
-    
-}
-```
-
-A questo punto abbiamo che lo store viene effettivamente modificato, Ma se andiamo sulla pagina vedremo che se aggiugiamo un elemento esso non viene visualizzato. Per ovviare a questo problema, dovuto al fatto che lo state del componente e lo store non sono connessi e cioè lo stato del componente non varia al variare dello store, utiliziamo una funzione dello store che si chiama subscirbe.
-
-## Subscribe
-
-Attraverso questa funzione andiamo ad intercettare le modifiche che vengono fatte allo store. 
-
-Andiamo ad inserire questa funzione nel componente e nello specifico nella funzione componentDidMount :
-```js
-componentDidMount(){
-        // settiamo lo state appena carichiamo il componente
-        this.setState({lista:[...store.getState().lista] });
-
-        //mettiamo in ascolto tramite il metodo subscribe che aggiorna lo stato del componente
-        store.subscribe( () => {
-            this.setState({lista:[...store.getState().lista] });
-        })
-         
-    }
-
-```
-
-in questo modo abbiamo che i componenti legati allo store si aggirneranno ogni volta che abbiamo un suo aggiornamento.
-
-Effettuiamo ulteriori modifiche affinche oltre ad inserire dei nuovi elementi possiamo anche rimuoverli aggiungendo un elemento ad ogni riga della lista che ne permetta l'elimminazione ed aggiungendo anche una nuova action nel reducer.
-
-Il codice della lista viene modificato come di seguito :
-```js
-<ul>
-    {
-    this.state.lista.map( (elemento,i) => <li key={i}>{elemento} <button onClick={ this.rimuoviElemento.bind(null,i)}>-</button></li>)
-    }
-</ul>
-```
-Come potete vedere abbiamo solo aggiunto un bottone ad ogni elemento della lista che richiama una funzione che prende in ingresso l'indice dell'array dell'elemento.
-
-La funzione rimuoviElemento invece viene costruita come segue : 
-```js
-rimuoviElemento = (i) => {
-    store.dispatch({
-        type : "REMOVE_ELEMENTO",
-        payload : i
-    })
-}
-```
-Come potete vedere la funzione non fa altro che inviare una richiesta di tipo eliminazione e un id
-
-Mentre modifichiamo la funzione reducer nel segunete modo :
-```js
-function storeReducer( state = {}, action) {
-    switch(action.type) {
-        case "ADD_ELEMENTO" : 
-            return {
-                    lista  : [
-                        action.payload,
-                        ...state.lista
-                    ]
-                }
-
-        case "REMOVE_ELEMENTO" :
-            return {
-                lista : [
-                    ...state.lista.slice(0,action.payload)
-                    ...state.lista.slice(action.payload + 1)
-                ]
-            }
-
-        default : 
-            return {...state}
-    }
-    
-}
-```
-
-Il reducer è il vero esecutore dell'eliminazione, utilizzando il metodo slice non facciamo altro che tornare la parte dello state fino all'elemento che vogliamo eliminare e poi andiamo ad aggiungere la restante parte senza l'indice dell'elemento corrente.
-
-
-Questo metodo proposto non è quello ottimale per la gestione dello store tramite redux nelle sezioni seguenti affineremo questo modello affiche la gestione sia più semplice quando il progetto cresce di dimensioni e vedremo anche come integrare al meglio Redux con React affinche collaborino al meglio.
-
-
-# React Redux 
-Per semplificare l'utilizzo di Redux con React esiste questa libreria. Per poterla richiamare basta installarla tramite il seguente comando : `npm install --save react-redux` .
-
-Un primo concetto con l'aggiunta di questa libreria è il componente presentazionale e i componenti container.
-
-## Componenti presentazionali 
-
-Quando andiamo a vedere la documentazione di react redux ci vengno mostrati, come prima parte, i componenti presentazionali ed i container. In pratica tramite questa libreria possiamo pensare alla parte grafica senza doverci preoccupare di quelli che sono i dati ad essa collegati e le funzioni che dovremmo definire in essa per eseguire operazioni quali promise.
-
-Quindi a valle di ciò andiamo a definire come esempio l'elenco della lista della spesa come componente a se stante e non definito completamente in App.
-
-Quindi iniziamo a definire delle cartelle nel progetto quali : Views e Container.
-
-
-Nella cartella Views andiamo a creare il componente per la lista con il segunete codice :
-```js
-import React from 'react';
-import Elemento from './elemento'
-
-export default function lista ({lista}) {
-
-    return (
-        <React.Fragment>
-            <ul>
-                {
-                    this.state.lista.map( (elemento,i) => {<Elemento key={i} elemento = {elemento} />})
-                }
-            </ul>
-        </React.Fragment>
-    )
-}
-```
-Ed il componente elemento con il segunete codice :
-```js
-import React from 'react';
-
-export default function elemento({elemento}) {
-
-    return (
-        <li >{elemento} <button onClick={ this.rimuoviElemento.bind(null,i)}>-</button></li>
-        )
-}
-    
-```
-
-Un ulteriore aggiunta nei componenti Views è quella dell'input con il codice qui di seguito : 
-```js
-import React from 'react':
-
-export default function input({aggiungiElemento}){
-    
-    let listaInput;
-
-    return(
-        <React.Fragment>
-            {/* il ref rappresenta un modo diverso per definire il riferimento*/}
-            <input ref = {node => {riferimentoTask = node}} />
-            <button onClick = { aggiungiElementoLista}> add </button>
-        </React.Fragment>
-    )
-}
-```
-
-Ora definiamo un componente che inglobi la nostra app, chiamiamolo MyApp : 
-```js
-import React from 'react';
-//import componenti Views
-import Input from './Views/input';
-import Lista from './Views/lista';
-
-export default function myApp(){
-    
-    return(
-        <div>
-            <Input />
-            <Lista />
-        </div>
-    )
-}
-
-``` 
-
-Dopo aver effettuato la scomposizione degli componenti di visualizzazione andiamo a strutturare i reducer.
-
-## Reducer
-Nella prima parte abbiamo inserito la funzione storeReducer nell'App mentre normalmente si utilizza una cartella apposita dove salviamo tutti i nostri reducer poiché in progetti più complessi potremmo avere bisogno di più funzioni che modificano il nostro stato in funzione di quanti stati può avere la nostra applicazione.
-
-Quindi creiamo la nostra cartella Reducer e inseriamo un file con il seguente codice (come standard possiamo utilizzare per il reducer principale il nome index.js) : 
-```js
-export default function storeReducer( state = {}, action) {
-    switch(action.type) {
-        case "ADD_ELEMENTO" : 
-            return {
-                    lista  : [
-                        action.payload,
-                        ...state.lista
-                    ]
-                }
-
-        case "REMOVE_ELEMENTO" :
-            return {
-                lista : [
-                    ...state.lista.slice(0,action.payload)
-                    ...state.lista.slice(action.payload + 1)
-                ]
-            }
-
-        default : 
-            return {...state}
-    }
-    
-}
-```
-
-
+Addentriamoci nelle definizioni degli elementi che compongono la libreria.
 
 ## Action 
-Effettueremo un uteriore modifica andando a copiare le funzioni aggiungiElemento e rimuoviElemento in una cartella Action.
-Riscriveremo il codice del file come di seguito :
-```js
- 
- export const aggiungiElementoLista = ({elemento}) => {
-
-        
-        
-        return({
-            type: "ADD_ELEMENTO"
-            payload : elemento
-        });
-    }
-
-export const rimuoviElemento = (i) => {
-    return({
-        type : "REMOVE_ELEMENTO",
-        payload : i
-    })
+Descrivono cosa accade all'applicazione, possiamo pensarle come delle definizioni di azioni e vengono realizzate nel seguente modo:
+```json
+{
+    type: "componente:azione",
+    payload: ["eventuale informazione utile all'esecuzione dell'azione"]
 }
 ```
-
-Come possiamo notare abbiamo eliminato la funzione dello store dispatch. Questa modifica viene effettuata poiché utilizzeremo la libreria react-redux che effettuerà in automatico il binding con i componenti react è che invierà in automatico le dispatch al reducer tramite la funzione connect(). A valle di questa operazione possiamo anche eliminare il contenuto in App di componentDidMount poiché sarà sempre connect che effettuerà l'aggiornamento dello stato del componente.
-
-Quindi le nostre action in questo modo si riducono al solo ricevere un parametro e inviare un azione.
-
-A valle di tutte le modifiche dovremmo avere una situazione del genere come file :
-+ src
-    + Action
-        + mainAction.js
-    + Container
-    + Reducer
-        + mainReducer.js
-    + Views 
-        + input.js
-        + lista.js
-        + elemento.js
-        + myApp.js
-+ App.js
-+ resto dei file di react
-
-## Provider
-
-A questo punto per passare lo store a tutti i componenti che ne hanno bisogno utilizzeremo un provider e cioè un componente wrapper che inietterà lo stato all'interno della nostra app e che darà i dati a tutti i componenti che ne richiedono senza dover passare lo store da padre in figlio.
-
-Quindi per effettuare questa operazione andiamo in App e modifichiamo il codice come segue :
-```js
-import React from 'react';
-import { createStore } from 'redux';
-import { Provider } from 'react-redux';
-
-import MyApp from './Views/myApp';
-let listaSpesa = [
-    "latte",
-    "uova",
-    "pane"
-]
-
-function storeReducer( state = {}, action) {
-    return {...state};
-}
-
-const store = createStore( storeReducer, {lista :[...listaSpesa]} )
-
-class App extends React.Component {
-    constructor (){
-        super()
-    }
-    
-    
-    render(){
-        return (
-            <div>
-                <Provider store = {store}>
-                   <MyApp />
-                </Provider>
-            </div>
-        )
+un esempio pratico è il seguente:
+```json
+{
+    type:"calendario:aggiungiEvento",
+    payload:{
+        titolo: "dentista",
+        data:"2023-03-16",
+        ora: "16:30"
     }
 }
 ```
 
-## Container
-I conteniner sono delle classi che prendono le Views e iniettano la parte di dati che vogliamo dare allo specifico componente.
-Come esempio scriviamo il container per il componente lista :
+In pratica l'action rappresenta un una tipologia di azione che viene fatta su un elemento ed eventualmente una serie di dati utili al completamento dell'azione.
+
+L'azione non passa funzioni ma solo dati statici ed immutabili, questo xke deve attivare uno o più reducer (le callback definite nello schema precedente) che devono eseguire delle operazioni predicibili, cioè non dipendenti da altri fattori esterni alla action
+
+
+## Action creator
+Una volta definito il concetto di Action possiamo porci una domanda ma se dovessimo effettuare azioni asincrone?
+In un operazione asicnrona non sappiamo a priori il suo risultato poiché dobbiamo attendere una risposta. In quest ottica di integrare un componente che faccia da layer nel nostro schema concettuale nascono le action creator e ciè funzioni che inglobano la logica di incertezza che a redux non piacciono e una volte risolte avviano la specifica action.
+un esempio può essere il risultato si una promise che può essere pending, rejected o fulfilled, nel nostro caso ci saranno eventualmente 3 action separate e l'action creator deciderà quale avviare in funzione dell'operazione.
+
+## Reducer
+Come accennato nel paragrafo precedente i reducer sono le funzioni che modificano lo stato e che vengono scatenate a valle di una action. Il reducer inoltre deve anche rispettare il criterio di immutabilità cioè non devono modificare direttamente lo stato ma devono lavorare su una sua copia che alla fine restituiranno allo store.
+Il concetto di reducer lo ritroviamo anche nelle classi di oggetti di uso comune del tipo gli array. La funzione recucer prendere in ingresso una funzione e degli input e la funzione va definita con lo stato precedente e i nuovi valori in ingresso.
+
+## Store
+Lo store è la cassaforte dove vengono tenuti i dati. Lo store prende in ingresso i reducer e ha come funzione principale getState che restituisce il contenuto
+
+## Dispatch 
+metodo con la quale è possibile modificare lo store che prende in ingresso un action e richiamo il reducer corrispondente.
+
+Lo store può essere modificato solo in questo modo.
+
+## Selectors
+Sono funzioni che estraggono specifici pezzi dello store.
+Oltre ad ottenere parte dello stato dello store richiamano anche il subscribe.
+
+## subscribe
+è sia una funzione che i componenti che osservano i cambiamenti di stato. In pratica un componente che si è sottoscritto ad una porzione dello store verà aggiornato dei cabiamenti dello store di suo interesse. In react possiamo pensarlo al trigger che permette il rirendering del componene quando lo stato cambia.
+
+## Enhancers
+Le possiamo considerare come delle porzioni di codice che effettuano delle funzioni quando viene eseguita un action. Un Enhancer per esempio è la libreria redux-logger (ormai non più aggiornata da parecchio) che ad ogni azione inviata al dispacher mostra in console, lo stato dello store precedente alla chiamata dell'action, l'action inviata con i rispettivi campi e lo stato a valle dell'esecuzione del reducer chiamato dall'action. In sguito gli Enhancer vengono definiti middleware.
+
+Tra i middleware che sicuramente utilizzeremo troviamo:
++ redux-devtools-extension : utilizzato per il debug dell'applicazione unito al plugin da installare nel browser
++ redux-thunk : è sia un pattern di interazione con redux sia un middleware per la gestione di chiamate asincrone
+
+
+# consigli per l'implemetazione di redux in react
+Per gestire i dati ci sono varie possibilità ma in genere le regole che possiamo utilizzare sono le seguenti:
++ se uno dato è comune in più componenti, mettetelo nello store
++ se il dato è relativo ad un componente, mettetelo nello stato del componente
++ per i form modificate i dati localmente e poi li passate allo store tramite un action
++ passate al componente solo i dati effettivamente necessari all'elaborazione eg. se un componente deve contare i valori in un array non passategli l'array ma direttamente il valore tramite un useSelector con una callback o nel wrapper calcolate il valore
++ Per un funzionamento ottimale del rendering di molti elementi, ad esempio una lista, potrebbe essere il caso di prelevare solo gli id della lista dal componente padre della lista e passare gli id ad i figli che andranno a leggere dallo store il loro specifico valore; cosi quando un elemento si aggiorna non verranno renderizzati tutti gli elementi ma solo quello specifico elemento della lista. Nel caso invece che venga cambiato l'id dell'array possiamo utilizzare delle funzioni di react-redux "shallowEqual" che forza il rendering dei soli elementi variati. Questa funzione viene passata al useSelector. un altro custom selettore è "memoized selector"
+
+
+# Struttura ideale di un applicazione basata su Redux
+Per lo sviluppo di applicazioni con redux e react utilizziamo alcune librerie già citate precedentemente ma è bene fare un riassunto:
++ @reduxjs/toolkit : pacchetto completo di redux e di altre utility
++ react-redux : comunicazione con lo store dei componenti react
++ redux-devtools-extension: importato automaticamente in @reduxjs/toolkit
+
+Inoltre la struttura delle cartelle proposta dal framework è la seguente:
++ /src
+    + index.js: the starting point for the app
+        + App.js: the top-level React component
+        + /app
+            + store.js: creates the Redux store instance
+        + /features
+            + /counter
+                + Counter.js: a React component that shows the UI for the counter feature
+                + counterSlice.js: the Redux logic for the counter feature
+
+In pratica lo store racchiude tutti gli elementi di redux e per ogni componente react che deve interagire con lo store andiamo ad implementare uno slice.
+
+## Settaggio dello store
+Il settaggio dello store con la nuova libreria è molto più rapido:
 ```js
-import {connect} from 'react-redux';
-import Lista from '../Views/lista'
+import { configureStore } from '@reduxjs/toolkit'
 
-//funzione che mappa lo stato con le proprietà del componente riceve in ingresso lo stato proveniente dallo store mentre il secondo sono le props del componente (se il passaggio è solo dallo store al componente allora basta solo state altrimenti dobbiamo inserire anche il secondo parametro)
-const mapStateToProps = (state, ownProps) => {
+import todosReducer from './features/todos/todosSlice'
+import filtersReducer from './features/filters/filtersSlice'
 
-    return (
-        //il primo elemento rappresenta la variabile che si aspetta il componente view, mentre il secondo è il contenuto dello store interessato 
-        lista : [...state.lista]
-    )
+const store = configureStore({
+  reducer: {
+    // Define a top-level state field named `todos`, handled by `todosReducer`
+    todos: todosReducer,
+    filters: filtersReducer
+  }
+})
+
+export default store
+```
+Utilizzando la funzione configure store andiamo ad eliminare il rootReducer riportanto tutto nello store e:
++ combina i reducer che importiamo nello store
++ aggiunta automatica del middleware thunk
++ aggiunta di altri middleware per la verifica di errori
++ imposta automaticamente la connessione con il dev tools del browser
+
+Queste funzionalità sono attive solo nella modalità sviluppo.
+
+## Scrittura degli Slices
+Mentre nelle vecchie versioni inglobavamo i componenti che dovevano gestore lo store in dei wrapper che iniettavano lo stato e le funzioni ora invece affianchiamo al componente uno slice. Lo slice possiamo considerarlo come un reducer ma con delle semplificazioni:
++ Possiamo scrivere i riduttori di casi come funzioni all'interno di un oggetto, invece di dover scrivere un'istruzione switch/case.
++ I riduttori potranno scrivere una logica di aggiornamento più breve e immutabile.
++ Tutti i creatori di azioni saranno generati automaticamente sulla base delle funzioni dei riduttori che abbiamo fornito.
+
+```js
+import { createSlice } from '@reduxjs/toolkit'
+
+const initialState = {
+  entities: [],
+  status: null
 }
 
-//connect prende in ingresso la funzione che mappa lo stato (il nome non è importante ma per standard si usa questa dicitura) mentre la seconda mappa le azioni definite nelle action. connect restituisce una funzione e quindi nel secondo parametro dobbiamo inserire la view per la quale abbiamo mappato il container
-const myList = connect(mapStateToProps)(Lista)
+const todosSlice = createSlice({
+  name: 'todos',
+  initialState,
+  reducers: {
+    todoAdded(state, action) {
+      // ✅ This "mutating" code is okay inside of createSlice!
+      state.entities.push(action.payload)
+    },
+    todoToggled(state, action) {
+      const todo = state.entities.find(todo => todo.id === action.payload)
+      todo.completed = !todo.completed
+    },
+    todosLoading(state, action) {
+      return {
+        ...state,
+        status: 'loading'
+      }
+    }
+  }
+})
 
-export default myList
+export const { todoAdded, todoToggled, todosLoading } = todosSlice.actions
+
+export default todosSlice.reducer
 ```
+Nell'esempio possiamo notare le differenze con i vecchi reducer (per chi li ha visti).
+In pratica non impostiamo più la logica del reducer ma creiamo un action creator con all'interno anche le funzioni reducer. Nello specifico questo è possibile utilizzando la funzione di createSlice che prende in ingresso:
++ name: stringa che viene utilizzata come prefisso per per generare le action type
++ initialState: lo stato inizale del reducer
++ reducer: oggetto chiave valore che come chiavi abbiamo l'intestazione della funzione e come valore abbiamo la funzione stessa
 
-Una volta che abbiamo creato il container dobbiamo utilizzare quest'ultimo nella definizione di MyApp al posto del componente view. 
+Normalmente nella definizione di un reducer dobbiamo lavorare con delle copie e non dobbiamo mai effettuare un assegnazione allo stato. Con l'utilizzo degli slice possiamo anche assegnare il valore in maniera diretta, sarà poi l'action creator che modificherà la logica affinche questo diventi un operazione di aggiornamento a dei dati immutabili. Questa condizione è valida solo per le funzioni createSlice e createReducer poiché implementano la libreria immer. **non utilizzate l'assegnazione diretta al difuori di questi due contesti altrimenti verrà generato un errore**.
+Possiamo comunque continuare ad utilizzare la classica logica di restituire lo stato tramite il return senza effettuare l'assegnazione.
 
+In molti casi non è semplice gestire i reducer poiché dobbiamo effettuare azioni come la generazione di un id o per logica passare più parametri al payload, in questi casi è possibili implementare un ulteriore feature di create slide come nell'esempio:
 ```js
-import React from 'react';
-//import componenti Views
-import Input from './Views/input';
-//import Lista from './Views/lista';
-import MyLista from '../Container/myLista'
-export default function myApp(){
-    
-    return(
-        <div>
-            <Input />
-            <MyLista />
-        </div>
-    )
-}
-
-```
-
-Il prossimo passaggio è creare un container per Input, per semplicità e per dimostrazione è possibile creare il container anche all'interno dell'elemento view ma per prassi è sempre bene separare la parte visuale dalla parte logica anche se il componente è piccolo :
-```js
-import {connect} from 'react-redux';
-
-import React from 'react';
-
-import {aggiungiElementoLista} from '../Action/mainAction'
-
-function input(){
-    
-    let listaInput;
-
-    return(
-        <React.Fragment>
-            {/* il ref rappresenta un modo diverso per definire il riferimento*/}
-            <input ref = {node => {riferimentoTask = node}} />
-            <button onClick = { aggiungiElementoLista}> add </button>
-        </React.Fragment>
-    )
-}
-
-const myInput = connect()(input)
-
-export default myInput
-```
-
-In realtà il componente cosi definito è già collegato allo store o meglio può effettuale l'operazione di dispatch poiche in realtà negli argomenti della nostra funzione abbiamo di default la funzione dispatch :
-```js
-
-function input({dispatch}){
-    
-    let listaInput;
-
-    return(
-        <React.Fragment>
-            {/* il ref rappresenta un modo diverso per definire il riferimento*/}
-            <input ref = {node => {listaInput = node}} />
-            {/*inseriamo la funzione anonima o il bind per evitare che qunado viene creato il componente la funzione non verrà avviata ma solo al click del mouse*/}
-            <button onClick = { () => dispatch( aggiungiElementoLista(listaInput.value) )}> add </button>
-        </React.Fragment>
-    )
-}
-
-```
-
-La funzione definita in questo modo è perfettamente funzionante ma il metodo ottimale è il segunete, partendo dal componente view iniziale :
-```js
-import React from 'react':
-
-export default function input({aggiungiElemento}){
-    
-    let listaInput;
-
-    return(
-        <React.Fragment>
-            {/* il ref rappresenta un modo diverso per definire il riferimento*/}
-            <input ref = {node => {listaInput = node}} />
-            <button onClick = { () =>{ 
-                aggiungiElemento( listaInput.value )
-                {/*per azzerare il valore nell'input*/}
-                listaInput.value= ""
-            }}
-            
-            > add </button>
-        </React.Fragment>
-    )
-}
-```
-Abbiamo il segunete container : 
-```js
-import {connect} from 'react-redux';
-import {aggiungiElementoLista} from '../Action/mainAction';
-import Input from '../Views/input';
-
-//le ownProps vengono utilizzate quando consideraimo nella view le props ma questo rappresenta il vecchio metodo cioé il passaggio di variabili da padre a figlio quindi nella stragrande maggioranza dei casi difficilmente le utilizzeremo
-const mapDispatchToProps = (dispatch, ownProps) => {
-    return{
-        //aggiungiElemento è la funzione definita nella view mentre aggiungiElementoLista è la funzione definita nelle action che abbiamo richiamato negli import
-        aggiungiElemento : (elemento) => {
-            dispatch( aggiungiElementoLista(elemento) )
+const todosSlice = createSlice({
+  name: 'todos',
+  initialState,
+  reducers: {
+    todoAdded(state, action) {
+      const todo = action.payload
+      state.entities[todo.id] = todo
+    },
+    todoToggled(state, action) {
+      const todoId = action.payload
+      const todo = state.entities[todoId]
+      todo.completed = !todo.completed
+    },
+    todoColorSelected: {
+      reducer(state, action) {
+        const { color, todoId } = action.payload
+        state.entities[todoId].color = color
+      },
+      prepare(todoId, color) {
+        return {
+          payload: { todoId, color }
         }
+      }
+    },
+    todoDeleted(state, action) {
+      delete state.entities[action.payload]
+    }
+  }
+})
+
+export const { todoAdded, todoToggled, todoColorSelected, todoDeleted } =
+  todosSlice.actions
+
+export default todosSlice.reducer
+```
+in pratica invece di utilizzare la versione breve della definizione utilizziamo una versione estesa come nell'esempio di `todoColorSelected`. In pratica l'oggetto che andiamo ad inserire nei reducer avrà una chiave che è il nome della funzione e come valore un oggetto formato da due funzioni che sono definite da due parole chiavi **reducer** e **prepare**.
+In pratica la funzione prepare sistema i dati da passare al reducer restituendo l'oggetto payload formato dagli input passati all'action creator (opzionalmente i campi *meta* ed *error*). 
+
+In questo modo possiamo utilizzare la funzione todoColorSelected passandogli gli oggetti todoId e color.
+
+
+## Utilizzare Thunk
+
+La libreria thunk di base permette l'implementazione delle chiamate asincrone.
+Di base integriamo questa libreria nello slice come segue:
+```js
+//import della funzione createAsyncThunk
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+
+// omit imports
+
+/**
+ * creiamo le funzioni che permetteranno di generare delle action che definiremo dopo 
+ * nei reducer, alla funzione createAsyncThunk passiamo il type e una funzione, in questo caso asincrona, che genererà l'action inviata al reducer
+ */
+
+export const fetchTodos = createAsyncThunk('todos/fetchTodos', async () => {
+  const response = await client.get('/fakeApi/todos')
+  return response.todos
+})
+/**
+ * mentre l'esempio di prima era una get la seguente è lo stesso codice con una post dove andiamo a gestire l'effetto di una modifica sul server
+*/
+export const saveNewTodo = createAsyncThunk('todos/saveNewTodo', async text => {
+  const initialTodo = { text }
+  const response = await client.post('/fakeApi/todos', { todo: initialTodo })
+  return response.todo
+})
+
+const todosSlice = createSlice({
+  name: 'todos',
+  initialState,
+  reducers: {
+    // omit case reducers
+  },
+  /**
+   * extraReducers per l'integrazione di action dipende
+  */
+  extraReducers: builder => {
+    builder
+      .addCase(fetchTodos.pending, (state, action) => {
+        state.status = 'loading'
+      })
+      .addCase(fetchTodos.fulfilled, (state, action) => {
+        const newEntities = {}
+        action.payload.forEach(todo => {
+          newEntities[todo.id] = todo
+        })
+        state.entities = newEntities
+        state.status = 'idle'
+      })
+      .addCase(saveNewTodo.fulfilled, (state, action) => {
+        const todo = action.payload
+        state.entities[todo.id] = todo
+      })
+  }
+})
+
+// omit exports and selectors
+```
+Con la funzione **createAsyncThunk** andiamo a generare un action creator dove inseriamo la chiamata asincrona. La funzione prende un action type e una callback per la gestione della chiamata asincrona. Per gestire la risposta nella funzione createSlice aggiungiamo il campo **extraReducers** che ha come valore una callback che come ingresso ha la variabile builder e per ogni action che volgiamo generare andiamo ad utilizzare la funzione addCase. addCase prende in ingresso un type definito dal nome della funzione asyncrona definita con createAsyncThunk ed lo stato della promise che può essere pending, regected, fullfilled.
+In funzione di questi tre stati possiamo definire il reducer che in questo caso è la callback passata come secondo parametro in ingresso alla funzione addCase.
+In questo specifico caso le action type che vengono generate sono le seguenti:
++ fetchTodos.pending: todos/fetchTodos/pending
++ fetchTodos.fulfilled: todos/fetchTodos/fulfilled
++ fetchTodos.rejected: todos/fetchTodos/rejected
+
+Vanno fatte delle osservazioni nella creazione del thunk e sono:
++ possiamo passare un unica variabile, nel caso ne servano di più vanno chiuse in un oggetto
++ viene inviata la action pending prima di avviare la promises, solo successivamente avvia la chiamata asincrona e attiva il reducer relativo alla risposta della promises
+
+### createEntityAdapter
+Se normalizziamo il dato per la ricerca e la sua gestione come proposto sulla documentazione (in soldoni dividere tutti gli elementi con i propri id) possiamo utilizzare una serie di funzioni build in di redux per velocizzare lo sviluppo di quelle funzioni che ciclicamente si ripresentano. In questo caso entrano in gioco le createEntityAdapter che possono semplificare l'automazione di alcune azioni come nell'esempio seguente:
+```js
+import {
+  createSlice,
+  createAsyncThunk,
+  createEntityAdapter
+} from '@reduxjs/toolkit'
+// omit some imports
+
+const todosAdapter = createEntityAdapter()
+
+const initialState = todosAdapter.getInitialState({
+  status: 'idle'
+})
+
+// omit thunks
+
+const todosSlice = createSlice({
+  name: 'todos',
+  initialState,
+  reducers: {
+    // omit some reducers
+    // Use an adapter reducer function to remove a todo by ID
+    todoDeleted: todosAdapter.removeOne,
+    completedTodosCleared(state, action) {
+      const completedIds = Object.values(state.entities)
+        .filter(todo => todo.completed)
+        .map(todo => todo.id)
+      // Use an adapter function as a "mutating" update helper
+      todosAdapter.removeMany(state, completedIds)
+    }
+  },
+  extraReducers: builder => {
+    builder
+      .addCase(fetchTodos.pending, (state, action) => {
+        state.status = 'loading'
+      })
+      .addCase(fetchTodos.fulfilled, (state, action) => {
+        todosAdapter.setAll(state, action.payload)
+        state.status = 'idle'
+      })
+      // Use another adapter function as a reducer to add a todo
+      .addCase(saveNewTodo.fulfilled, todosAdapter.addOne)
+  }
+})
+
+// omit selectors
+```
+
+Una versione completa dello slice è la seguente:
+```js
+import {
+  createSlice,
+  createSelector,
+  createAsyncThunk,
+  createEntityAdapter
+} from '@reduxjs/toolkit'
+import { client } from '../../api/client'
+import { StatusFilters } from '../filters/filtersSlice'
+
+const todosAdapter = createEntityAdapter()
+
+const initialState = todosAdapter.getInitialState({
+  status: 'idle'
+})
+
+// Thunk functions
+export const fetchTodos = createAsyncThunk('todos/fetchTodos', async () => {
+  const response = await client.get('/fakeApi/todos')
+  return response.todos
+})
+
+export const saveNewTodo = createAsyncThunk('todos/saveNewTodo', async text => {
+  const initialTodo = { text }
+  const response = await client.post('/fakeApi/todos', { todo: initialTodo })
+  return response.todo
+})
+
+const todosSlice = createSlice({
+  name: 'todos',
+  initialState,
+  reducers: {
+    todoToggled(state, action) {
+      const todoId = action.payload
+      const todo = state.entities[todoId]
+      todo.completed = !todo.completed
+    },
+    todoColorSelected: {
+      reducer(state, action) {
+        const { color, todoId } = action.payload
+        state.entities[todoId].color = color
+      },
+      prepare(todoId, color) {
+        return {
+          payload: { todoId, color }
+        }
+      }
+    },
+    todoDeleted: todosAdapter.removeOne,
+    allTodosCompleted(state, action) {
+      Object.values(state.entities).forEach(todo => {
+        todo.completed = true
+      })
+    },
+    completedTodosCleared(state, action) {
+      const completedIds = Object.values(state.entities)
+        .filter(todo => todo.completed)
+        .map(todo => todo.id)
+      todosAdapter.removeMany(state, completedIds)
+    }
+  },
+  extraReducers: builder => {
+    builder
+      .addCase(fetchTodos.pending, (state, action) => {
+        state.status = 'loading'
+      })
+      .addCase(fetchTodos.fulfilled, (state, action) => {
+        todosAdapter.setAll(state, action.payload)
+        state.status = 'idle'
+      })
+      .addCase(saveNewTodo.fulfilled, todosAdapter.addOne)
+  }
+})
+
+export const {
+  allTodosCompleted,
+  completedTodosCleared,
+  todoAdded,
+  todoColorSelected,
+  todoDeleted,
+  todoToggled
+} = todosSlice.actions
+
+export default todosSlice.reducer
+
+export const { selectAll: selectTodos, selectById: selectTodoById } =
+  todosAdapter.getSelectors(state => state.todos)
+
+export const selectTodoIds = createSelector(
+  // First, pass one or more "input selector" functions:
+  selectTodos,
+  // Then, an "output selector" that receives all the input results as arguments
+  // and returns a final result value
+  todos => todos.map(todo => todo.id)
+)
+
+export const selectFilteredTodos = createSelector(
+  // First input selector: all todos
+  selectTodos,
+  // Second input selector: all filter values
+  state => state.filters,
+  // Output selector: receives both values
+  (todos, filters) => {
+    const { status, colors } = filters
+    const showAllCompletions = status === StatusFilters.All
+    if (showAllCompletions && colors.length === 0) {
+      return todos
     }
 
-}
+    const completedStatus = status === StatusFilters.Completed
+    // Return either active or completed todos based on filter
+    return todos.filter(todo => {
+      const statusMatches =
+        showAllCompletions || todo.completed === completedStatus
+      const colorMatches = colors.length === 0 || colors.includes(todo.color)
+      return statusMatches && colorMatches
+    })
+  }
+)
 
-
-/*
-In questo caso che stiamo facendo l'inserimento di un nuovo valore non abbiamo bisogno di passare lo store quindi inseriremo null come primo parametro, il secondo parametro non è altro che il mapping tra la funzione che possiede la view e la action corrispondente
-*/
-export default connect(null,mapDispatchToProps )(Input)
+export const selectFilteredTodoIds = createSelector(
+  // Pass our other memoized selector as an input
+  selectFilteredTodos,
+  // And derive data in the output selector
+  filteredTodos => filteredTodos.map(todo => todo.id)
+)
 ```
 
-in realtà esiste anche un metodo di mapping più breve :
-```js
-import {connect} from 'react-redux';
-import {aggiungiElementoLista} from '../Action/mainAction';
-import Input from '../Views/input';
+# custom hooks
 
-//si fa corrispondere alla funzione dichiarata nella view quella della action
-export default connect(null,{aggiungiElemento : aggiungiElementoLista} )(Input)
+## useSelector
 
-
-/*
-  Un ulteriore semplificazione si ha quando la funzione definita nella view ha lo stesso nome della action in quel caso basta solo scrivere il nome della action nell'oggetto 
-*/
-
-```
-
-## Middleware
-Andando a vedere la documentazione di redux possiamo notare che createStore ha 3 parametri in ingresso che sono : il reducer, lo stato iniziale e l'Enhancer .
-In pratica il terzo parametro permette di inserire dei componenti ulteriori alla nostra struttara definiti middleware. Attraverso queste applicazioni possiamo andare ad interagire con le varie fasi dell'interazione di redux (prima e dopo la dispatch) con il frontend.
-Una delle funzionalità dei middleware è quella di poter inserire del contunuto alle nostre funzioni di comunicazione con il backend o di fare uno screening delle azioni che si sono effettuate cosi da poter individuare eventuali bug.
-
-Per poter applicare un middleware dobbiamo utilizzare la funzione applyMiddleware che ingloba l'elenco di middleware che vogliamo applicare e gli fornisce i metodi getState e dispatch. 
-
-per poter applicare un middleware quindi basta scrivere il segunete codice nella creazione dello store :
-```js
-const store = createStore(storeReducer, {...prova}, applyMiddleware(logger, promise));
-```
-
-### Logger
-Logger è un middleware scritto dalla comunity installabile tramite il comando :  
-`npm install redux-logger`
-
-Il logger non è altro che un componente che ti mostra in console le azioni che vengono eseguite sullo store.
-
-Per poterlo utilizzare, una volta installato, basta importarlo trmaite il comando :  
-```js
-import logger from 'redux-logger'
-```
-
-un esempio è il segunete :  
-![](../immagini/redux-logger.png)  
-
-Come potete vedere da delle informazioni sull'action eseguita sullo stato precedente e sullo stato attuale.
-
-### 
+## useDispatch

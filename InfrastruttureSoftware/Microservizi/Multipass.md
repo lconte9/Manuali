@@ -8,6 +8,7 @@ per installare multipass lanciamo il comando: `snap install multipass`
 
 Un ultima cosa per poter utilizzare multipass dobbiamo inserire l'utente attuale nella lista sudo tramite il comando: `adduser nome_user sudo` e riavviare.
 
+***Durante l'uso ci possono essere dei problemi di avvio una soluzione per dare accesso a multipass_socket è il seguente: `sudo chmod a+w /var/snap/multipass/common/multipass_socket`***
 # launch 
 
 Lancia una macchina virtuale 
@@ -55,6 +56,11 @@ Arguments:
                        <url> is a custom image URL that is in http://, https://,
                        or file:// format.
 
+## Esempio 
+`multipass launch -n nome_macchina -m 2G`
+
+con l'aggiunta di uno spazio di memoria condiviso:  
+`multipass launch -n nome_macchina -m 2G --mount /some/local/path:/some/instance/path`
 
 # exec
 Esegue una funzione su di una macchina
@@ -162,7 +168,7 @@ Arguments:
 
 
 # purge
-Elimina tutte le istanze eliminate definiitivamente
+Elimina tutte le istanze eliminate definitivamente
 
 multipass purge [options]
 
@@ -244,6 +250,12 @@ Arguments:
                                    optional <path> is the mount point. If
                                    omitted, the mount point will be the same as
                                    the source's absolute path
+
+## example
+`multipass mount ~/Documenti/progetto nome_macchina:/path_destinazione`
+            
+A volte può essere necessario installare un pacchetto di multipass nell'istanza per effettuare il mount tramite il comando: `sudo snap install multipass-sshfs`
+dopo di che va riavviata la macchina
 
 # transfer
 Copia un file tra l'host e l'istanza

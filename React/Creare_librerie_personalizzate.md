@@ -30,7 +30,7 @@ Rollup.js è una libreria per la compilazione parziale di progetti grandi mentre
 
 innanzi tutti installiamo le librerie con il seguente comando:
 ```
-npm i -D @babel/cli @babel/core @babel/preset-env @babel/preset-react rollup @rollup/plugin-babel rollup-plugin-delete rollup-plugin-peer-deps-external npm-run-all
+npm i -D @babel/cli @babel/core @babel/preset-env @babel/preset-react rollup @rollup/plugin-babel rollup-plugin-delete @rollup/plugin-image rollup-plugin-peer-deps-external npm-run-all @rollup/plugin-image rollup-plugin-import-css
 ```
 
 l'opzione -D equivale al comando --save-dev.
@@ -48,6 +48,7 @@ import babel from '@rollup/plugin-babel';
 import external from 'rollup-plugin-peer-deps-external';
 import del from 'rollup-plugin-delete';
 import pkg from './package.json';
+import image from '@rollup/plugin-image';
 
 export default {
     /* punto di ingresso al componente in generale abbiamo l'index.js presente in src*/
@@ -69,6 +70,7 @@ export default {
             exclude: 'node_modules/**',
             babelHelpers: 'bundled' 
         }),
+        image(),
         del({ targets: ['dist/*'] }),
     ],
     external: Object.keys(pkg.peerDependencies || {}),
@@ -195,8 +197,7 @@ In questo modo avremo che i moduli sono quelli riferiti alla libreria
 Modifichiamo App.js di playground in modo che utilizzi il componente appena costruito e per eseguire l'applicazione di dev lanciamo i seguenti comandi:
 ```
 cd path_root_libreria
-npm run i-all
-npm run dev
+npm run i-all && npm run dev
 ```
 
 ora qualsiasi modifica faremo al componente verrà automaticamente buildata e aggiornata nell'app

@@ -35,3 +35,15 @@ Un'altra opzione è quella di escludere specifiche directory dello spazio di lav
 `sudo sysctl -w fs.inotify.max_user_watches=12288`
 
 per modificarlo permanentemente bisogna lanciare il comando `echo fs.inotify.max_user_watches=16384 | sudo tee -a /etc/sysctl.conf sudo sysctl -p` o in alternativa modificare manualmente il file /etc/sysctl.conf e lanciare il comando `sysctl -p`
+
+
+# Installazione tramite snap 
+
+possiamo installare NodeJS tramite il gestore snap tramite il comando:
+`snap install node --classic --channel=18`
+
+il channel rappresenta la versione di node che vogliamo installare.
+
+per avviare node possiamo utilizzare il comando: `snap run node`
+se invece volete utilizzare il comando da terminale potete aggiungere un alias all file .bash_aliases come segue:
+`alias node='/snap/node/current/bin/node'`

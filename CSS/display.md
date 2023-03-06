@@ -88,3 +88,5 @@ Tutte le opzioni table sono supportate da tutti i browser
 
 
 # Grid
+
+Permette di gestire lo spazio a disposizione come una griglia.
