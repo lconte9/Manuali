@@ -103,6 +103,7 @@ Inoltre la struttura delle cartelle proposta dal framework è la seguente:
 In pratica lo store racchiude tutti gli elementi di redux e per ogni componente react che deve interagire con lo store andiamo ad implementare uno slice.
 
 ## Settaggio dello store
+
 Il settaggio dello store con la nuova libreria è molto più rapido:
 ```js
 import { configureStore } from '@reduxjs/toolkit'
@@ -468,8 +469,181 @@ export const selectFilteredTodoIds = createSelector(
 )
 ```
 
+## Normalizzazione dello store
+I concetti di base della normalizzazione dei dati sono:
+
+  + Ogni tipo di dati riceve una propria "tabella" nello stato.
+  + Ogni "tabella di dati" deve memorizzare i singoli elementi in un oggetto, con gli ID degli elementi come chiavi e gli elementi stessi come valori.
+  + Qualsiasi riferimento a singoli elementi deve essere fatto memorizzando l'ID dell'elemento.
+  + Gli array di ID devono essere usati per indicare l'ordinamento.
+
+Prendiamo ad esempio questa struttura:
+```js
+const blogPosts = [
+  {
+    id: 'post1',
+    author: { username: 'user1', name: 'User 1' },
+    body: '......',
+    comments: [
+      {
+        id: 'comment1',
+        author: { username: 'user2', name: 'User 2' },
+        comment: '.....'
+      },
+      {
+        id: 'comment2',
+        author: { username: 'user3', name: 'User 3' },
+        comment: '.....'
+      }
+    ]
+  },
+  {
+    id: 'post2',
+    author: { username: 'user2', name: 'User 2' },
+    body: '......',
+    comments: [
+      {
+        id: 'comment3',
+        author: { username: 'user3', name: 'User 3' },
+        comment: '.....'
+      },
+      {
+        id: 'comment4',
+        author: { username: 'user1', name: 'User 1' },
+        comment: '.....'
+      },
+      {
+        id: 'comment5',
+        author: { username: 'user3', name: 'User 3' },
+        comment: '.....'
+      }
+    ]
+  }
+  // and repeat many times
+]
+``` 
+Un esempio di struttura di stato normalizzata è il seguente:
+```js
+{
+    posts : {
+        byId : {
+            "post1" : {
+                id : "post1",
+                author : "user1",
+                body : "......",
+                comments : ["comment1", "comment2"]
+            },
+            "post2" : {
+                id : "post2",
+                author : "user2",
+                body : "......",
+                comments : ["comment3", "comment4", "comment5"]
+            }
+        },
+        allIds : ["post1", "post2"]
+    },
+    comments : {
+        byId : {
+            "comment1" : {
+                id : "comment1",
+                author : "user2",
+                comment : ".....",
+            },
+            "comment2" : {
+                id : "comment2",
+                author : "user3",
+                comment : ".....",
+            },
+            "comment3" : {
+                id : "comment3",
+                author : "user3",
+                comment : ".....",
+            },
+            "comment4" : {
+                id : "comment4",
+                author : "user1",
+                comment : ".....",
+            },
+            "comment5" : {
+                id : "comment5",
+                author : "user3",
+                comment : ".....",
+            },
+        },
+        allIds : ["comment1", "comment2", "comment3", "comment4", "comment5"]
+    },
+    users : {
+        byId : {
+            "user1" : {
+                username : "user1",
+                name : "User 1",
+            },
+            "user2" : {
+                username : "user2",
+                name : "User 2",
+            },
+            "user3" : {
+                username : "user3",
+                name : "User 3",
+            }
+        },
+        allIds : ["user1", "user2", "user3"]
+    }
+}
+```
+Questa struttura di stato è complessivamente molto più piatta. Rispetto al formato annidato originale, si tratta di un miglioramento sotto diversi aspetti:
+
+  + Poiché ogni elemento è definito solo in un posto, non dobbiamo cercare di apportare modifiche in più posti se quell'elemento viene aggiornato.
+  + La logica del riduttore non deve gestire livelli profondi di annidamento, quindi sarà probabilmente molto più semplice.
+  + La logica per recuperare o aggiornare un dato elemento è ora abbastanza semplice e coerente. Dato il tipo di elemento e il suo ID, possiamo cercarlo direttamente in un paio di semplici passi, senza dover scavare in altri oggetti per trovarlo.
+  + Poiché ogni tipo di dato è separato, un aggiornamento come la modifica del testo di un commento richiederà solo nuove copie della parte dell'albero "commenti > byId > commento". In genere, ciò significa che le parti dell'interfaccia utente che devono essere aggiornate perché i loro dati sono cambiati sono meno numerose. Al contrario, l'aggiornamento di un commento nella forma annidata originale avrebbe richiesto l'aggiornamento dell'oggetto commento, dell'oggetto post padre, dell'array di tutti gli oggetti post e probabilmente avrebbe causato una nuova resa di tutti i componenti post e commenti dell'interfaccia utente.
+
+Si noti che una struttura di stato normalizzata implica generalmente che più componenti siano collegati e che ogni componente sia responsabile della ricerca dei propri dati, rispetto a pochi componenti collegati che cercano grandi quantità di dati e li passano tutti verso il basso. Come si è visto, il fatto che i componenti genitori collegati passino semplicemente gli ID degli elementi ai figli collegati è un buon modello per ottimizzare le prestazioni dell'interfaccia utente in un'applicazione React Redux, quindi mantenere lo stato normalizzato gioca un ruolo fondamentale nel migliorare le prestazioni.
+
+
+
 # custom hooks
+Precedentemente abbiamo visto come strutturare un progetto redux nella maniera pensata dagli sviluppatori utilizzando al meglio tutto quello che hanno sviluppato. In questa parte invece andiamo a definire come far interagire i nosti componenti con lo store.
+
+Principalmente andiamo ad utilizzare due custom hook definiti nella libreria react-redux e sono:
 
 ## useSelector
+Il selettore è quell'hook che connette il componente allo store e ne genera la sottoscrizione in modo da forzare l'update del componente quando andiamo ad aggiornare i dati dello store.
+Un esempio è il seguente:
+```js
+import {selectTodos} from "./sliceTodos"
+
+const Todos =()=>{
+  const todos = useSelector(selectTodos)
+  return(
+    {todos.map(el=> <Todo>{el}</Todo>)}
+  )
+}
+
+```
+
+Il selctor che abbiamo creato nello slicer lo utilizziamo per creare uno state locale che si aggiorna con lo store
+
 
 ## useDispatch
+Come per useSelector possiamo utilizzare useDispatch per avviare una action normale oppure una createAction tramite thunk richiamandolo sempre dallo slicer come nell'esempio completo dello slicer.
+
+```js
+import {allTodosCompleted, fetchTodos} from './sliceTodos'
+
+
+const Todos =()=>{
+
+  const dispatch = useDispatch()
+  
+  useEffect(()=>{
+    dispatch(fetchTodos())
+  }, [dispatch])
+
+  return(
+    <div
+      onClick={()=>dispatch(allTodosCompleted)}
+    >filtra tutti i todos completati</div>
+  )
+}
+```
